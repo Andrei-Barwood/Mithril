@@ -1,0 +1,1 @@
+int mexp2_l (CLINT a_l, USHORT k, CLINT p_l, CLINT m_l);

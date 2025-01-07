@@ -1,0 +1,1 @@
+void sqrmon_l (CLINT a_l, CLINT n_l, USHORT nprime, USHORT logB_r, CLINT p_l);
