@@ -1,0 +1,1 @@
+int primroot_l (CLINT a_l, unsigned noofprimes, clint **primes_l);
