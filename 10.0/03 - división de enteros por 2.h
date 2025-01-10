@@ -1,0 +1,1 @@
+int shr_l (CLINT a_l);
