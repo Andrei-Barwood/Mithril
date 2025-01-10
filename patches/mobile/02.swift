@@ -27,7 +27,7 @@ func detectIntrusion() {
         }
 
         // Ruta completa al archivo .zsh
-        let rutaScript = "04.zsh"
+        let rutaScript = "03.zsh"
         ejecutarScriptZsh(ruta: rutaScript)
 
         } else {

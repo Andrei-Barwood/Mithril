@@ -18,7 +18,7 @@ func checkRootAccess() {
         }
 
         // Ruta completa al archivo .zsh
-        let rutaScript = "04.zsh"
+        let rutaScript = "03.zsh"
         ejecutarScriptZsh(ruta: rutaScript)
         fatalError("El acceso de root no está permitido para esta operación.")
     } else {
