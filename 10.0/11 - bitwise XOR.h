@@ -1,0 +1,1 @@
+void xor_l (CLINT a_l, CLINT b_l, CLINT c_l);
