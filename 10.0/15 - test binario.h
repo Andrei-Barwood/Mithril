@@ -1,0 +1,1 @@
+int testbit_l (CLINT a_l, unsigned int pos);
