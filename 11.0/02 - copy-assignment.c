@@ -12,9 +12,3 @@ void cpy_l (CLINT dest_l, CLINT src_l) {
 		*++dest_l = *++src_l;
 	}
 }
-
-#define SWAP(a, b) ((a) ^=(b), (b) ^=(a), (a)^=(b))
-#define SWAP_L(a_l, b_l) \
-				(xor_l((a_l), (b_l), (a_l)), \
-				 xor_l((b_l), (a_l), (b_l)), \
-				 xor_l((a_l), (b_l), (a_l)))
