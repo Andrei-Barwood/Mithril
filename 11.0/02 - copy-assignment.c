@@ -1,3 +1,5 @@
+#include "flint.h"
+
 void cpy_l (CLINT dest_l, CLINT src_l) {
 	clint *lastsrc_l = MSDPTR_L (src_l);
 	*dest_l = *src_l;
