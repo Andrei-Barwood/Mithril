@@ -1,0 +1,1 @@
+void cpy_l (CLINT dest_l, CLINT src_l);
