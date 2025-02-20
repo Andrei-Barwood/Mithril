@@ -1,0 +1,1 @@
+int str2clint_l (CLINT n_l, char *str, USHORT b);
