@@ -1,0 +1,1 @@
+int byte2clint_l (CLINT n_l, UCHAR *bytestr, int len);
