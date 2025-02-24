@@ -1,0 +1,1 @@
+char * xclint2str_l (CLINT n_l, USHORT base, int showbase);
