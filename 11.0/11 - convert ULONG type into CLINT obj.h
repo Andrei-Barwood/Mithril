@@ -1,0 +1,1 @@
+void ul2clint_l (CLINT num_l, ULONG ul);
