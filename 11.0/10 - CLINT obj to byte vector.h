@@ -1,0 +1,1 @@
+UCHAR * clint2byte_l (CLINT n_l, int *len);
