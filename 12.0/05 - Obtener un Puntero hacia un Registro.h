@@ -1,0 +1,1 @@
+clint * get_reg_l (unsigned int reg);
