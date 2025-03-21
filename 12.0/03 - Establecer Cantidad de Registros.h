@@ -1,0 +1,1 @@
+void set_noofregs_l (unsigned int nregs);
