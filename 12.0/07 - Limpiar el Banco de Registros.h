@@ -1,0 +1,1 @@
+int purge_reg_l (unsigned int reg);
