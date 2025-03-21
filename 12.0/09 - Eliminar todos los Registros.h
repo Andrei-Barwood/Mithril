@@ -1,0 +1,1 @@
+int purgeall_reg_l (void);
