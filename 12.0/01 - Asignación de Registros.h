@@ -1,0 +1,1 @@
+int create_reg_l (void);
