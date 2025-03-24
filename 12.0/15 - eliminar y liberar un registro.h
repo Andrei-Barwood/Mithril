@@ -1,0 +1,1 @@
+void free_l (CLINT reg_l);
