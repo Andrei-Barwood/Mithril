@@ -1,0 +1,1 @@
+void purge_l (CLINT n_l);
