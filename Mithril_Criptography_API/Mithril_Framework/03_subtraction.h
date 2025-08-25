@@ -8,7 +8,7 @@
 #ifndef MODERN_SUBTRACTION_H
 #define MODERN_SUBTRACTION_H
 
-#include <flint/fmpz.h>
+#include <fmpz.h>
 
 // Return codes
 #define E_FLINT_OK    0
