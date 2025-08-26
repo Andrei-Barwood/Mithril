@@ -70,6 +70,8 @@
 				08_mixed_subtraction.c = (macos, );
 				09_increment.h = (macos, );
 				10_increment.c = (macos, );
+				12_decrement.c = (macos, );
+				14_multiplication.c = (macos, );
 				Mithril_Framework.h = (macos, );
 				"NTL-interface.h" = (macos, );
 				acb.h = (macos, );
@@ -262,6 +264,8 @@
 				05_mixed_addition.h,
 				07_mixed_subtraction.h,
 				09_increment.h,
+				11_decrement.h,
+				13_multiplication.h,
 				acb_calc.h,
 				acb_dft.h,
 				acb_dirichlet.h,
