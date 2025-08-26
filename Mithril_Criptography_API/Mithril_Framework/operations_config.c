@@ -59,10 +59,10 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "multiplication",
-        .function_name = "mithril_multiply",
-        .file_name = "mithril_multiplication",
+        .function_name = "fmpz_mul_safe",
+        .file_name = "14_multiplication.c",
         .description = "",
-        .framework_function = "umul_l"  // Assuming you have this function
+        .framework_function = "fmpz_mul_safe"  // Assuming you have this function
     }
     // Add more operations here easily!
 };
