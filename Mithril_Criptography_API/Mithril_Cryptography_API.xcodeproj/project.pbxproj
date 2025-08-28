@@ -260,6 +260,7 @@
 				ulong_extras.h = (macos, );
 			};
 			publicHeaders = (
+				01_addition.h,
 				03_subtraction.h,
 				05_mixed_addition.h,
 				07_mixed_subtraction.h,
