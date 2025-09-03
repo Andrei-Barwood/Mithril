@@ -63,7 +63,16 @@ static const MithrilOperationConfig operations[] = {
         .file_name = "14_multiplication.c",
         .description = "",
         .framework_function = "fmpz_mul_safe"  // Assuming you have this function
+    },
+    
+    {
+        .operation_name = "mixed multiplication",
+        .function_name = "mixed multiplication",
+        .file_name = "16_mixed_mult.c",
+        .description = "",
+        .framework_function = "fmpz_mul_ui_mod"  // Assuming you have this function
     }
+    
     // Add more operations here easily!
 };
 
