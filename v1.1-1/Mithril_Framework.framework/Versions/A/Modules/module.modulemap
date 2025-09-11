@@ -1,6 +1,0 @@
-framework module Mithril_Framework {
-  umbrella header "Mithril_Framework.h"
-  export *
-
-  module * { export * }
-}
