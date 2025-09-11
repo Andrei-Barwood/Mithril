@@ -73,6 +73,7 @@
 				12_decrement.c = (macos, );
 				14_multiplication.c = (macos, );
 				16_mixed_mult.c = (macos, );
+				18_squaring.c = (macos, );
 				Mithril_Framework.h = (macos, );
 				"NTL-interface.h" = (macos, );
 				acb.h = (macos, );
@@ -269,6 +270,7 @@
 				11_decrement.h,
 				13_multiplication.h,
 				15_mixed_mult.h,
+				17_squaring.h,
 				acb_calc.h,
 				acb_dft.h,
 				acb_dirichlet.h,
