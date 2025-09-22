@@ -79,6 +79,14 @@ static const MithrilOperationConfig operations[] = {
         .file_name = "18_squaring.c",
         .description = "",
         .framework_function = "fmpz_square_safe"  // Assuming you have this function
+    },
+    
+    {
+        .operation_name = "karatsuba multipliying",
+        .function_name = "flint_kmul",
+        .file_name = "20_karats_mul.c",
+        .description = "",
+        .framework_function = "flint_kmul"  // Assuming you have this function
     }
     
     // Add more operations here easily!

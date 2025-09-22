@@ -1,5 +1,12 @@
 //
 //  operations_config.h
+//  Mithril_Cryptography_API
+//
+//  Created by Andres Barbudo on 22-09-25.
+//
+
+//
+//  operations_config.h
 //  Mithril_Criptography_API
 //
 //  Created by Andres Barbudo on 20-08-25.

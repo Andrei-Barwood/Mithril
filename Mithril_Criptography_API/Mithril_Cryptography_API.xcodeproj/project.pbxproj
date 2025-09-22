@@ -6,11 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		0102C4922E51D76800F571B7 /* FLINT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0102C4742E51D38A00F571B7 /* FLINT.framework */; };
-		0102C4932E51D76800F571B7 /* FLINT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0102C4742E51D38A00F571B7 /* FLINT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		0102C4592E51D34000F571B7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -21,23 +16,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		0102C4902E51D76400F571B7 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0102C4942E51D76800F571B7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0102C4932E51D76800F571B7 /* FLINT.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,8 +31,6 @@
 /* Begin PBXFileReference section */
 		0102C45B2E51D34000F571B7 /* Mithril_Cryptography_API */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Mithril_Cryptography_API; sourceTree = BUILT_PRODUCTS_DIR; };
 		0102C46A2E51D37100F571B7 /* Mithril_Framework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mithril_Framework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0102C4742E51D38A00F571B7 /* FLINT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FLINT.framework; sourceTree = "<group>"; };
-		0102C49A2E51D85800F571B7 /* FLINT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLINT.framework; path = ../../../Desktop/FLINT.framework; sourceTree = "<group>"; };
 		012CB14E2E55D7C10073484C /* Mithril.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mithril.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		012CB15F2E55D99B0073484C /* Mithril_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mithril_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -74,192 +56,11 @@
 				14_multiplication.c = (macos, );
 				16_mixed_mult.c = (macos, );
 				18_squaring.c = (macos, );
-				Mithril_Framework.h = (macos, );
-				"NTL-interface.h" = (macos, );
-				acb.h = (macos, );
-				acb_calc.h = (macos, );
-				acb_dft.h = (macos, );
-				acb_dirichlet.h = (macos, );
-				acb_elliptic.h = (macos, );
-				acb_hypgeom.h = (macos, );
-				acb_mat.h = (macos, );
-				acb_modular.h = (macos, );
-				acb_poly.h = (macos, );
-				acb_theta.h = (macos, );
-				acb_types.h = (macos, );
-				acf.h = (macos, );
-				acf_types.h = (macos, );
-				aprcl.h = (macos, );
-				arb.h = (macos, );
-				arb_calc.h = (macos, );
-				arb_fmpz_poly.h = (macos, );
-				arb_fpwrap.h = (macos, );
-				arb_hypgeom.h = (macos, );
-				arb_mat.h = (macos, );
-				arb_poly.h = (macos, );
-				arb_types.h = (macos, );
-				arf.h = (macos, );
-				arf_types.h = (macos, );
-				arith.h = (macos, );
-				bernoulli.h = (macos, );
-				bool_mat.h = (macos, );
-				ca.h = (macos, );
-				ca_ext.h = (macos, );
-				ca_field.h = (macos, );
-				ca_mat.h = (macos, );
-				ca_poly.h = (macos, );
-				ca_types.h = (macos, );
-				ca_vec.h = (macos, );
-				calcium.h = (macos, );
+				20_karats_mul.c = (macos, );
 				code_generator.c = (macos, );
 				code_generator.h = (macos, );
-				config.h = (macos, );
-				crt_helpers.h = (macos, );
-				d_mat.h = (macos, );
-				d_vec.h = (macos, );
-				dirichlet.h = (macos, );
-				dlog.h = (macos, );
-				double_extras.h = (macos, );
-				double_interval.h = (macos, );
-				fexpr.h = (macos, );
-				fexpr_builtin.h = (macos, );
-				fft.h = (macos, );
-				fft_small.h = (macos, );
-				"flint 2.h" = (macos, );
-				"flint-config 2.h" = (macos, );
-				"flint-config.h" = (macos, );
-				"flint-mparam.h" = (macos, );
-				flint.h = (macos, );
-				fmpq.h = (macos, );
-				fmpq_mat.h = (macos, );
-				fmpq_mpoly.h = (macos, );
-				fmpq_mpoly_factor.h = (macos, );
-				fmpq_poly.h = (macos, );
-				fmpq_types.h = (macos, );
-				fmpq_vec.h = (macos, );
-				"fmpz 2.h" = (macos, );
-				fmpz.h = (macos, );
-				fmpz_extras.h = (macos, );
-				fmpz_factor.h = (macos, );
-				fmpz_lll.h = (macos, );
-				fmpz_mat.h = (macos, );
-				fmpz_mod.h = (macos, );
-				fmpz_mod_mat.h = (macos, );
-				fmpz_mod_mpoly.h = (macos, );
-				fmpz_mod_mpoly_factor.h = (macos, );
-				fmpz_mod_poly.h = (macos, );
-				fmpz_mod_poly_factor.h = (macos, );
-				fmpz_mod_types.h = (macos, );
-				fmpz_mod_vec.h = (macos, );
-				fmpz_mpoly.h = (macos, );
-				fmpz_mpoly_factor.h = (macos, );
-				fmpz_mpoly_q.h = (macos, );
-				fmpz_poly.h = (macos, );
-				fmpz_poly_factor.h = (macos, );
-				fmpz_poly_mat.h = (macos, );
-				fmpz_poly_q.h = (macos, );
-				"fmpz_types 2.h" = (macos, );
-				fmpz_types.h = (macos, );
-				fmpz_vec.h = (macos, );
-				fmpzi.h = (macos, );
-				fq.h = (macos, );
-				fq_default.h = (macos, );
-				fq_default_mat.h = (macos, );
-				fq_default_poly.h = (macos, );
-				fq_default_poly_factor.h = (macos, );
-				fq_embed.h = (macos, );
-				fq_embed_templates.h = (macos, );
-				fq_mat.h = (macos, );
-				fq_mat_templates.h = (macos, );
-				fq_nmod.h = (macos, );
-				fq_nmod_embed.h = (macos, );
-				fq_nmod_mat.h = (macos, );
-				fq_nmod_mpoly.h = (macos, );
-				fq_nmod_mpoly_factor.h = (macos, );
-				fq_nmod_poly.h = (macos, );
-				fq_nmod_poly_factor.h = (macos, );
-				fq_nmod_types.h = (macos, );
-				fq_nmod_vec.h = (macos, );
-				fq_poly.h = (macos, );
-				fq_poly_factor.h = (macos, );
-				fq_poly_factor_templates.h = (macos, );
-				fq_poly_templates.h = (macos, );
-				fq_templates.h = (macos, );
-				fq_types.h = (macos, );
-				fq_vec.h = (macos, );
-				fq_vec_templates.h = (macos, );
-				fq_zech.h = (macos, );
-				fq_zech_embed.h = (macos, );
-				fq_zech_mat.h = (macos, );
-				fq_zech_mpoly.h = (macos, );
-				fq_zech_mpoly_factor.h = (macos, );
-				fq_zech_poly.h = (macos, );
-				fq_zech_poly_factor.h = (macos, );
-				fq_zech_types.h = (macos, );
-				fq_zech_vec.h = (macos, );
-				gettimeofday.h = (macos, );
-				gmpcompat.h = (macos, );
-				gr.h = (macos, );
-				gr_generic.h = (macos, );
-				gr_mat.h = (macos, );
-				gr_mpoly.h = (macos, );
-				gr_poly.h = (macos, );
-				gr_special.h = (macos, );
-				gr_types.h = (macos, );
-				gr_vec.h = (macos, );
-				hypgeom.h = (macos, );
-				limb_types.h = (macos, );
-				long_extras.h = (macos, );
-				longlong.h = (macos, );
-				longlong_asm_clang.h = (macos, );
-				longlong_asm_gcc.h = (macos, );
-				longlong_asm_gnu.h = (macos, );
-				longlong_div_gnu.h = (macos, );
-				longlong_msc_arm64.h = (macos, );
-				longlong_msc_x86.h = (macos, );
-				machine_vectors.h = (macos, );
-				mag.h = (macos, );
-				"mpf-impl.h" = (macos, );
-				mpfr_mat.h = (macos, );
-				mpfr_vec.h = (macos, );
-				mpn_extras.h = (macos, );
-				mpn_mod.h = (macos, );
-				mpoly.h = (macos, );
-				mpoly_types.h = (macos, );
-				n_poly.h = (macos, );
-				n_poly_types.h = (macos, );
-				nf.h = (macos, );
-				nf_elem.h = (macos, );
-				nfloat.h = (macos, );
-				nmod.h = (macos, );
-				nmod_mat.h = (macos, );
-				nmod_mpoly.h = (macos, );
-				nmod_mpoly_factor.h = (macos, );
-				nmod_poly.h = (macos, );
-				nmod_poly_factor.h = (macos, );
-				nmod_poly_mat.h = (macos, );
-				nmod_types.h = (macos, );
-				nmod_vec.h = (macos, );
-				operations_config.c = (macos, );
-				operations_config.h = (macos, );
-				padic.h = (macos, );
-				padic_mat.h = (macos, );
-				padic_poly.h = (macos, );
-				padic_types.h = (macos, );
-				partitions.h = (macos, );
-				perm.h = (macos, );
-				profiler.h = (macos, );
-				qadic.h = (macos, );
-				qfb.h = (macos, );
-				qqbar.h = (macos, );
-				qsieve.h = (macos, );
 				template_generator.c = (macos, );
 				template_generator.h = (macos, );
-				templates.h = (macos, );
-				test_helpers.h = (macos, );
-				thread_pool.h = (macos, );
-				thread_support.h = (macos, );
-				ulong_extras.h = (macos, );
 			};
 			publicHeaders = (
 				01_addition.h,
@@ -271,188 +72,9 @@
 				13_multiplication.h,
 				15_mixed_mult.h,
 				17_squaring.h,
-				acb_calc.h,
-				acb_dft.h,
-				acb_dirichlet.h,
-				acb_elliptic.h,
-				acb_hypgeom.h,
-				acb_mat.h,
-				acb_modular.h,
-				acb_poly.h,
-				acb_theta.h,
-				acb_types.h,
-				acb.h,
-				acf_types.h,
-				acf.h,
-				aprcl.h,
-				arb_calc.h,
-				arb_fmpz_poly.h,
-				arb_fpwrap.h,
-				arb_hypgeom.h,
-				arb_mat.h,
-				arb_poly.h,
-				arb_types.h,
-				arb.h,
-				arf_types.h,
-				arf.h,
-				arith.h,
-				bernoulli.h,
-				bool_mat.h,
-				ca_ext.h,
-				ca_field.h,
-				ca_mat.h,
-				ca_poly.h,
-				ca_types.h,
-				ca_vec.h,
-				ca.h,
-				calcium.h,
+				19_karats_mul.h,
 				code_generator.h,
-				config.h,
-				crt_helpers.h,
-				d_mat.h,
-				d_vec.h,
-				dirichlet.h,
-				dlog.h,
-				double_extras.h,
-				double_interval.h,
-				fexpr_builtin.h,
-				fexpr.h,
-				fft_small.h,
-				fft.h,
-				"flint 2.h",
-				"flint-config 2.h",
-				"flint-config.h",
-				"flint-mparam.h",
-				flint.h,
-				fmpq_mat.h,
-				fmpq_mpoly_factor.h,
-				fmpq_mpoly.h,
-				fmpq_poly.h,
-				fmpq_types.h,
-				fmpq_vec.h,
-				fmpq.h,
-				"fmpz 2.h",
-				fmpz_extras.h,
-				fmpz_factor.h,
-				fmpz_lll.h,
-				fmpz_mat.h,
-				fmpz_mod_mat.h,
-				fmpz_mod_mpoly_factor.h,
-				fmpz_mod_mpoly.h,
-				fmpz_mod_poly_factor.h,
-				fmpz_mod_poly.h,
-				fmpz_mod_types.h,
-				fmpz_mod_vec.h,
-				fmpz_mod.h,
-				fmpz_mpoly_factor.h,
-				fmpz_mpoly_q.h,
-				fmpz_mpoly.h,
-				fmpz_poly_factor.h,
-				fmpz_poly_mat.h,
-				fmpz_poly_q.h,
-				fmpz_poly.h,
-				"fmpz_types 2.h",
-				fmpz_types.h,
-				fmpz_vec.h,
-				fmpz.h,
-				fmpzi.h,
-				fq_default_mat.h,
-				fq_default_poly_factor.h,
-				fq_default_poly.h,
-				fq_default.h,
-				fq_embed_templates.h,
-				fq_embed.h,
-				fq_mat_templates.h,
-				fq_mat.h,
-				fq_nmod_embed.h,
-				fq_nmod_mat.h,
-				fq_nmod_mpoly_factor.h,
-				fq_nmod_mpoly.h,
-				fq_nmod_poly_factor.h,
-				fq_nmod_poly.h,
-				fq_nmod_types.h,
-				fq_nmod_vec.h,
-				fq_nmod.h,
-				fq_poly_factor_templates.h,
-				fq_poly_factor.h,
-				fq_poly_templates.h,
-				fq_poly.h,
-				fq_templates.h,
-				fq_types.h,
-				fq_vec_templates.h,
-				fq_vec.h,
-				fq_zech_embed.h,
-				fq_zech_mat.h,
-				fq_zech_mpoly_factor.h,
-				fq_zech_mpoly.h,
-				fq_zech_poly_factor.h,
-				fq_zech_poly.h,
-				fq_zech_types.h,
-				fq_zech_vec.h,
-				fq_zech.h,
-				fq.h,
-				gettimeofday.h,
-				gmpcompat.h,
-				gr_generic.h,
-				gr_mat.h,
-				gr_mpoly.h,
-				gr_poly.h,
-				gr_special.h,
-				gr_types.h,
-				gr_vec.h,
-				gr.h,
-				hypgeom.h,
-				limb_types.h,
-				long_extras.h,
-				longlong_asm_clang.h,
-				longlong_asm_gcc.h,
-				longlong_asm_gnu.h,
-				longlong_div_gnu.h,
-				longlong_msc_arm64.h,
-				longlong_msc_x86.h,
-				longlong.h,
-				machine_vectors.h,
-				mag.h,
-				"mpf-impl.h",
-				mpfr_mat.h,
-				mpfr_vec.h,
-				mpn_extras.h,
-				mpn_mod.h,
-				mpoly_types.h,
-				mpoly.h,
-				n_poly_types.h,
-				n_poly.h,
-				nf_elem.h,
-				nf.h,
-				nfloat.h,
-				nmod_mat.h,
-				nmod_mpoly_factor.h,
-				nmod_mpoly.h,
-				nmod_poly_factor.h,
-				nmod_poly_mat.h,
-				nmod_poly.h,
-				nmod_types.h,
-				nmod_vec.h,
-				nmod.h,
-				"NTL-interface.h",
-				operations_config.h,
-				padic_mat.h,
-				padic_poly.h,
-				padic_types.h,
-				padic.h,
-				partitions.h,
-				perm.h,
-				profiler.h,
-				qadic.h,
-				qfb.h,
-				qqbar.h,
-				qsieve.h,
 				template_generator.h,
-				templates.h,
-				test_helpers.h,
-				thread_pool.h,
-				thread_support.h,
-				ulong_extras.h,
 			);
 			target = 0102C4692E51D37100F571B7 /* Mithril_Framework */;
 		};
@@ -479,7 +101,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0102C4922E51D76800F571B7 /* FLINT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,7 +131,6 @@
 		0102C4522E51D34000F571B7 = {
 			isa = PBXGroup;
 			children = (
-				0102C4742E51D38A00F571B7 /* FLINT.framework */,
 				0102C45D2E51D34000F571B7 /* Mithril_Criptography_API */,
 				0102C46B2E51D37100F571B7 /* Mithril_Framework */,
 				0102C4992E51D85800F571B7 /* Frameworks */,
@@ -532,7 +152,6 @@
 		0102C4992E51D85800F571B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0102C49A2E51D85800F571B7 /* FLINT.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -595,7 +214,6 @@
 				0102C4662E51D37100F571B7 /* Sources */,
 				0102C4672E51D37100F571B7 /* Frameworks */,
 				0102C4682E51D37100F571B7 /* Resources */,
-				0102C4902E51D76400F571B7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -919,6 +537,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -930,16 +549,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/Mithril_Framework/**",
+					"$(SRCROOT)/**",
 					"$(PROJECT_DIR)/Mithril_Framework",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(PROJECT_DIR)/Mithril_Framework/FLINT.framework/Headers/**",
-					"$(PROJECT_DIR)/Mithril_Framework/**",
-					"$(PROJECT_DIR)/Mithril_Framework/CodeGeneration/**",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)/Mithril_Framework/FLINT.framework/Headers/**";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -953,6 +568,7 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lflint",
 					"-lgmp",
@@ -973,6 +589,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -984,16 +601,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/Mithril_Framework/**",
+					"$(SRCROOT)/**",
 					"$(PROJECT_DIR)/Mithril_Framework",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(PROJECT_DIR)/Mithril_Framework/FLINT.framework/Headers",
-					"$(PROJECT_DIR)/Mithril_Framework/CodeGeneration/**",
-					"$(PROJECT_DIR)/Mithril_Framework/**",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)/Mithril_Framework/FLINT.framework/Headers/**";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1007,6 +620,7 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lflint",
 					"-lgmp",

@@ -1,0 +1,16 @@
+framework module FLINT {
+    umbrella header "flint.h"
+    
+    explicit module GMP {
+        header "gmp.h"
+        export *
+    }
+    
+    explicit module MPFR {
+        header "mpfr.h"
+        export *
+    }
+    
+    export *
+    module * { export * }
+}
