@@ -87,6 +87,14 @@ static const MithrilOperationConfig operations[] = {
         .file_name = "20_karats_mul.c",
         .description = "",
         .framework_function = "flint_kmul"  // Assuming you have this function
+    },
+    
+    {
+        .operation_name = "division with remainder",
+        .function_name = "div_fmpz",
+        .file_name = "22_div_w_rem.c",
+        .description = "",
+        .framework_function = "div_fmpz"  // Assuming you have this function
     }
     
     // Add more operations here easily!

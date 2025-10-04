@@ -57,6 +57,7 @@
 				16_mixed_mult.c = (macos, );
 				18_squaring.c = (macos, );
 				20_karats_mul.c = (macos, );
+				22_div_w_rem.c = (macos, );
 				code_generator.c = (macos, );
 				code_generator.h = (macos, );
 				template_generator.c = (macos, );
@@ -73,7 +74,9 @@
 				15_mixed_mult.h,
 				17_squaring.h,
 				19_karats_mul.h,
+				21_div_w_rem.h,
 				code_generator.h,
+				operations_config.h,
 				template_generator.h,
 			);
 			target = 0102C4692E51D37100F571B7 /* Mithril_Framework */;
