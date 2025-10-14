@@ -11,14 +11,14 @@
 static const MithrilOperationConfig operations[] = {
     {
         .operation_name = "addition",
-        .function_name = "add_l",
+        .function_name = "add_l-mithril",
         .file_name = "02_addition.c",
         .description = "",
         .framework_function = {"fmpz_add_modern", "fmpz_add_with_legacy_overflow_check"}
     },
     {
         .operation_name = "subtraction",
-        .function_name = "sub_l",
+        .function_name = "sub_l-mithril",
         .file_name = "04_subtraction.c",
         .description = "",
         .framework_function = "sub_l"  // Assuming you have this function
@@ -26,7 +26,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "mixed addtion",
-        .function_name = "uadd_l",
+        .function_name = "uadd_l-mithril",
         .file_name = "06_mixed_addition.c",
         .description = "",
         .framework_function = "uadd_l"  // Assuming you have this function
@@ -34,7 +34,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "mixed subtraction",
-        .function_name = "usub_l",
+        .function_name = "usub_l-mithril",
         .file_name = "08_mixed_subtraction.c",
         .description = "",
         .framework_function = "usub_l"  // Assuming you have this function
@@ -42,7 +42,7 @@ static const MithrilOperationConfig operations[] = {
 
     {
         .operation_name = "increment",
-        .function_name = "inc_l",
+        .function_name = "inc_l-mithril",
         .file_name = "10_increment.c",
         .description = "",
         .framework_function = "inc_l"  // Assuming you have this function
@@ -50,7 +50,7 @@ static const MithrilOperationConfig operations[] = {
 
     {
         .operation_name = "decrement",
-        .function_name = "mithril_subtract",
+        .function_name = "mithril_subtract-mithril",
         .file_name = "12_decrement.c",
         .description = "",
         .framework_function = "dec_l"  // Assuming you have this function
@@ -59,7 +59,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "multiplication",
-        .function_name = "fmpz_mul_safe",
+        .function_name = "fmpz_mul_safe-mithril",
         .file_name = "14_multiplication.c",
         .description = "",
         .framework_function = "fmpz_mul_safe"  // Assuming you have this function
@@ -67,7 +67,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "mixed multiplication",
-        .function_name = "mixed multiplication",
+        .function_name = "mixed multiplication-mithril",
         .file_name = "16_mixed_mult.c",
         .description = "",
         .framework_function = "fmpz_mul_ui_mod"  // Assuming you have this function
@@ -75,7 +75,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "squaring",
-        .function_name = "square",
+        .function_name = "square-mithril",
         .file_name = "18_squaring.c",
         .description = "",
         .framework_function = "fmpz_square_safe"  // Assuming you have this function
@@ -83,7 +83,7 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "karatsuba multipliying",
-        .function_name = "flint_kmul",
+        .function_name = "flint_kmul-mithril",
         .file_name = "20_karats_mul.c",
         .description = "",
         .framework_function = "flint_kmul"  // Assuming you have this function
@@ -91,10 +91,18 @@ static const MithrilOperationConfig operations[] = {
     
     {
         .operation_name = "division with remainder",
-        .function_name = "div_fmpz",
+        .function_name = "div_fmpz-mithril",
         .file_name = "22_div_w_rem.c",
         .description = "",
         .framework_function = "div_fmpz"  // Assuming you have this function
+    },
+
+    {
+        .operation_name = "remainder modular power of 2",
+        .function_name = "rem_mod_pow_of_2-mithril",
+        .file_name = "24_rem_mod_pow_of_2.c",
+        .description = "",
+        .framework_function = "rem_mod_pow_of_2"  // Assuming you have this function
     }
     
     // Add more operations here easily!
