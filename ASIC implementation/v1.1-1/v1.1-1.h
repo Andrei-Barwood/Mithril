@@ -1,15 +1,19 @@
-#ifndef FLINT_PLI_H
-#define FLINT_PLI_H
+//
+// 
+// PLI Interface Header
+//
 
-#include "veriuser.h"
-#include "acc_user.h"
-// Note: FLINT headers would need to be available in your build environment
-#include "flint.h"
-#include "fmpz.h"
+#ifndef MITHRIL_PLI_LIBSODIUM_H
+#define MITHRIL_PLI_LIBSODIUM_H
 
-// PLI function prototypes
-int pli_big_add_calltf(int user_data, int reason);
-int pli_big_add_checktf(int user_data, int reason);
-int pli_big_add_sizetf(int user_data, int reason);
+#include "vpi_user.h"
+#include <sodium.h>
 
-#endif
+// PLI callback function prototypes
+PLI_INT32 mithril_add_scalar_calltf(PLI_BYTE8 *user_data);
+PLI_INT32 mithril_add_mod_curve25519_calltf(PLI_BYTE8 *user_data);
+
+// Registration function
+void register_mithril_pli_tasks(void);
+
+#endif // MITHRIL_PLI_LIBSODIUM_H
