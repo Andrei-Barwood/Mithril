@@ -111,6 +111,14 @@ static const MithrilOperationConfig operations[] = {
         .file_name = "25_modular_addition.c",
         .description = "",
         .framework_function = "madd_secure"  // Assuming you have this function
+    },
+
+    {
+        .operation_name = "addition",
+        .function_name = "addition-mithril",
+        .file_name = "25_addition.c",
+        .description = "",
+        .framework_function = "mithril_add_scalar"  // Assuming you have this function
     }
     
     // Add more operations here easily!
