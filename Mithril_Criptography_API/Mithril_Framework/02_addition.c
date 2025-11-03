@@ -1,81 +1,165 @@
 //
-//  02_addition.c
-//  Modern FLINT Implementation
+// 
+// Mithril Cryptography API - libsodium Implementation
 //
-//  Created by Andres Barbudo on 20-08-25.
+// Created by Andres Barbudo
 //
-/*
-#include "flint.h"
-#include "fmpz.h"
-#include "stdio.h"
-*/
-/**
- * Modern FLINT implementation of big integer addition
- * @param result - output: sum of a and b
- * @param a - first operand
- * @param b - second operand
- * @return 0 on success, 1 if overflow would have occurred in the old system
- */
 
-/*
-int fmpz_add_modern(fmpz_t result, const fmpz_t a, const fmpz_t b) {
-    // FLINT handles all overflow automatically - no manual overflow checking needed
-    fmpz_add(result, a, b);
-    
-    // FLINT 3.x automatically handles arbitrary precision
-    // Return 0 to indicate success (no overflow in modern FLINT)
+#include "01_addition_libsodium.h"
+#include <string.h>
+
+/**
+ * Inicialización de libsodium (llamar una vez al inicio del programa)
+ */
+static int mithril_ensure_initialized(void) {
+    static int initialized = 0;
+    if (!initialized) {
+        if (sodium_init() < 0) {
+            return -1;
+        }
+        initialized = 1;
+    }
     return 0;
 }
-*/
-/**
- * Alternative implementation with explicit overflow detection
- * for compatibility with legacy code that expects overflow checking
- */
 
-/*
-int fmpz_add_with_legacy_overflow_check(fmpz_t result, const fmpz_t a, const fmpz_t b,
-                                       size_t max_bits) {
-    fmpz_add(result, a, b);
-    
-    // Check if result exceeds the specified bit limit (for legacy compatibility)
-    if (fmpz_bits(result) > max_bits) {
-        // Could truncate here if needed for legacy behavior
-        // fmpz_tdiv_r_2exp(result, result, max_bits);
-        return 1; // Indicate "overflow" occurred
+/**
+ * Suma de enteros de 256 bits con protección timing-safe
+ */
+int mithril_add_scalar(
+    uint8_t result[MITHRIL_SCALAR_BYTES],
+    const uint8_t a[MITHRIL_SCALAR_BYTES],
+    const uint8_t b[MITHRIL_SCALAR_BYTES]
+) {
+    if (mithril_ensure_initialized() < 0) {
+        return -1;
     }
     
-    return 0;
+    // Validación de parámetros
+    if (!result || !a || !b) {
+        return -1;
+    }
+    
+    // Suma con carry tracking (timing-safe)
+    uint16_t carry = 0;
+    for (size_t i = 0; i < MITHRIL_SCALAR_BYTES; i++) {
+        uint16_t sum = (uint16_t)a[i] + (uint16_t)b[i] + carry;
+        result[i] = (uint8_t)(sum & 0xFF);
+        carry = sum >> 8;
+    }
+    
+    // Limpiar datos sensibles del stack
+    sodium_memzero(&carry, sizeof(carry));
+    
+    return (carry != 0) ? 1 : 0;  // 1 si hubo overflow
 }
-*/
+
 /**
- * Simple usage example
+ * Suma modular sobre el grupo de Curve25519 (orden L)
+ * Esta es la operación más segura para criptografía moderna
  */
-/*
-int main() {
-    fmpz_t a, b, sum;
+int mithril_add_mod_l(
+    uint8_t result[crypto_core_ed25519_SCALARBYTES],
+    const uint8_t a[crypto_core_ed25519_SCALARBYTES],
+    const uint8_t b[crypto_core_ed25519_SCALARBYTES]
+) {
+    if (mithril_ensure_initialized() < 0) {
+        return -1;
+    }
     
-    // Initialize FLINT integers
-    fmpz_init(a);
-    fmpz_init(b);
-    fmpz_init(sum);
+    if (!result || !a || !b) {
+        return -1;
+    }
     
-    // Set some values
-    fmpz_set_str(a, "123456789012345678901234567890", 10);
-    fmpz_set_str(b, "987654321098765432109876543210", 10);
-    
-    // Perform addition
-    int result = fmpz_add_modern(sum, a, b);
-    
-    // Print result
-    flint_printf("Result: ");
-    fmpz_print(sum);
-    flint_printf("\nStatus: %d\n", result);
-    
-    // Clean up
-    fmpz_clear(a);
-    fmpz_clear(b);
-    fmpz_clear(sum);
+    // libsodium proporciona suma modular timing-safe para escalares Ed25519
+    crypto_core_ed25519_scalar_add(result, a, b);
     
     return 0;
 }
-*/
+
+/**
+ * Suma constant-time para tamaños variables
+ * Útil para operaciones genéricas donde necesitas timing-safety
+ */
+int mithril_add_constant_time(
+    uint8_t *result,
+    const uint8_t *a,
+    const uint8_t *b,
+    size_t len
+) {
+    if (mithril_ensure_initialized() < 0) {
+        return -1;
+    }
+    
+    if (!result || !a || !b || len == 0) {
+        return -1;
+    }
+    
+    uint16_t carry = 0;
+    
+    // Little-endian addition con timing constante
+    for (size_t i = 0; i < len; i++) {
+        uint16_t sum = (uint16_t)a[i] + (uint16_t)b[i] + carry;
+        result[i] = (uint8_t)(sum & 0xFF);
+        carry = sum >> 8;
+    }
+    
+    int overflow = (carry != 0) ? 1 : 0;
+    
+    // Limpieza segura
+    sodium_memzero(&carry, sizeof(carry));
+    
+    return overflow;
+}
+
+/**
+ * Función de ejemplo de uso
+ */
+#ifdef MITHRIL_BUILD_EXAMPLES
+
+#include <stdio.h>
+
+int example_addition(void) {
+    uint8_t a[MITHRIL_SCALAR_BYTES];
+    uint8_t b[MITHRIL_SCALAR_BYTES];
+    uint8_t result[MITHRIL_SCALAR_BYTES];
+    
+    // Inicializar con valores de ejemplo
+    memset(a, 0xFF, MITHRIL_SCALAR_BYTES);  // Máximo valor
+    memset(b, 0x01, MITHRIL_SCALAR_BYTES);  // +1
+    
+    // Realizar suma (detectará overflow)
+    int status = mithril_add_scalar(result, a, b);
+    
+    printf("Addition status: %d (1=overflow, 0=ok, -1=error)\n", status);
+    
+    // Limpiar datos sensibles
+    sodium_memzero(a, sizeof(a));
+    sodium_memzero(b, sizeof(b));
+    sodium_memzero(result, sizeof(result));
+    
+    return 0;
+}
+
+int example_modular_addition(void) {
+    uint8_t a[crypto_core_ed25519_SCALARBYTES];
+    uint8_t b[crypto_core_ed25519_SCALARBYTES];
+    uint8_t result[crypto_core_ed25519_SCALARBYTES];
+    
+    // Generar escalares aleatorios
+    crypto_core_ed25519_scalar_random(a);
+    crypto_core_ed25519_scalar_random(b);
+    
+    // Suma modular (automáticamente mod L)
+    int status = mithril_add_mod_l(result, a, b);
+    
+    printf("Modular addition status: %d\n", status);
+    
+    // Limpieza
+    sodium_memzero(a, sizeof(a));
+    sodium_memzero(b, sizeof(b));
+    sodium_memzero(result, sizeof(result));
+    
+    return 0;
+}
+
+#endif // MITHRIL_BUILD_EXAMPLES
