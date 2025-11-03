@@ -103,6 +103,14 @@ static const MithrilOperationConfig operations[] = {
         .file_name = "24_rem_mod_pow_of_2.c",
         .description = "",
         .framework_function = "rem_mod_pow_of_2"  // Assuming you have this function
+    },
+
+        {
+        .operation_name = "modular addition",
+        .function_name = "modular_addition-mithril",
+        .file_name = "25_modular_addition.c",
+        .description = "",
+        .framework_function = "madd_secure"  // Assuming you have this function
     }
     
     // Add more operations here easily!
