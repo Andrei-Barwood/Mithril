@@ -1,20 +1,25 @@
 //
-//  03_subtraction.h
-//  Mithril_Criptography_API
+// 03_subtraction.h
+// Mithril_Criptography_API
 //
-//  Created by Andres Barbudo on 21-08-25.
+// Created by Andres Barbudo on 21-08-25.
 //
 
-#ifndef MODERN_SUBTRACTION_H
-#define MODERN_SUBTRACTION_H
+#ifndef LIBSODIUM_SUBTRACTION_H
+#define LIBSODIUM_SUBTRACTION_H
 
-#include <fmpz.h>
+#include <sodium.h>
+#include <stddef.h>
 
 // Return codes
-#define E_FLINT_OK    0
-#define E_FLINT_UFL   1  // Underflow
+#define E_SODIUM_OK 0
+#define E_SODIUM_UFL 1  // Underflow
 
 // Function to perform subtraction with underflow handling
-int fmpz_sub_with_underflow(fmpz_t result, const fmpz_t a, const fmpz_t b);
+// Numbers are in little-endian format
+int sodium_sub_with_underflow(unsigned char *result, 
+                               const unsigned char *a, 
+                               const unsigned char *b, 
+                               size_t len);
 
 #endif
