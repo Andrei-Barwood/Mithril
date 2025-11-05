@@ -1,0 +1,24 @@
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.framework
+
+# IDE
+.vscode/
+.idea/
+*.xcworkspace
+xcuserdata/
+
+# Generated
+*.log
+*.tmp
+certs/*.key
+certs/*.crt
+!certs/dev/.gitkeep
+
+# macOS
+.DS_Store
+
