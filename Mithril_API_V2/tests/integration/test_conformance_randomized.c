@@ -43,6 +43,10 @@ static uint64_t prng_next_u64(prng_state *st) {
     return x * UINT64_C(0x2545F4914F6CDD1D);
 }
 
+static int should_inject_invalid_case(prng_state *st) {
+    return ((prng_next_u64(st) & UINT64_C(0x7)) == 0u) ? 1 : 0;
+}
+
 static size_t prng_next_len(prng_state *st, size_t min_len, size_t max_len) {
     uint64_t span = (uint64_t)(max_len - min_len + 1u);
     return min_len + (size_t)(prng_next_u64(st) % span);
@@ -173,6 +177,8 @@ static uint32_t run_conformance_for_op(
     prng_state st;
     uint32_t i;
     uint32_t divergences = 0u;
+    uint32_t error_cases = 0u;
+    uint32_t error_divergences = 0u;
 
     st.x = seed;
 
@@ -185,21 +191,31 @@ static uint32_t run_conformance_for_op(
         size_t a_len = prng_next_len(&st, 1u, MAX_INPUT_BYTES);
         size_t b_len = prng_next_len(&st, 1u, MAX_INPUT_BYTES);
         size_t m_len = prng_next_len(&st, 1u, MAX_INPUT_BYTES);
-        size_t written_c23 = 0u;
-        size_t written_flint = 0u;
+        size_t written_c23 = ~(size_t)0u;
+        size_t written_flint = ~((size_t)1u);
         mithril_status st_c23;
         mithril_status st_flint;
+        int inject_invalid = should_inject_invalid_case(&st);
 
         prng_fill_bytes(&st, a, a_len);
         prng_fill_bytes(&st, b, b_len);
         prng_fill_bytes(&st, m, m_len);
 
-        if (op == OP_BIGINT_SUB && cmp_be(a, a_len, b, b_len) < 0) {
-            swap_bytes(a, &a_len, b, &b_len);
-        }
+        if (inject_invalid) {
+            if (op == OP_MODARITH_ADD_MOD || op == OP_MODARITH_MUL_MOD) {
+                m_len = 1u;
+                m[0] = 0u;
+            } else {
+                a_len = 0u;
+            }
+        } else {
+            if (op == OP_BIGINT_SUB && cmp_be(a, a_len, b, b_len) < 0) {
+                swap_bytes(a, &a_len, b, &b_len);
+            }
 
-        if ((op == OP_MODARITH_ADD_MOD || op == OP_MODARITH_MUL_MOD) && all_zero(m, m_len)) {
-            m[m_len - 1u] = 1u;
+            if ((op == OP_MODARITH_ADD_MOD || op == OP_MODARITH_MUL_MOD) && all_zero(m, m_len)) {
+                m[m_len - 1u] = 1u;
+            }
         }
 
         st_c23 = run_operation(
@@ -207,16 +223,34 @@ static uint32_t run_conformance_for_op(
         st_flint = run_operation(
             op, ctx_flint, a, a_len, b, b_len, m, m_len, out_flint, sizeof(out_flint), &written_flint);
 
-        if (st_c23 != st_flint ||
-            written_c23 != written_flint ||
-            (st_c23 == MITHRIL_OK && memcmp(out_c23, out_flint, written_c23) != 0)) {
+        if (st_c23 != MITHRIL_OK || st_flint != MITHRIL_OK) {
+            ++error_cases;
+            if (st_c23 != st_flint) {
+                ++divergences;
+                ++error_divergences;
+                if (divergences <= 10u) {
+                    fprintf(
+                        stderr,
+                        "[DIVERGENCE] op=%s case=%u invalid=%d status(c23=%d flint=%d)\n",
+                        op_name(op),
+                        i,
+                        inject_invalid,
+                        (int)st_c23,
+                        (int)st_flint);
+                }
+            }
+            continue;
+        }
+
+        if (written_c23 != written_flint || memcmp(out_c23, out_flint, written_c23) != 0) {
             ++divergences;
             if (divergences <= 10u) {
                 fprintf(
                     stderr,
-                    "[DIVERGENCE] op=%s case=%u status(c23=%d flint=%d) written(c23=%zu flint=%zu)\n",
+                    "[DIVERGENCE] op=%s case=%u invalid=%d status(c23=%d flint=%d) written(c23=%zu flint=%zu)\n",
                     op_name(op),
                     i,
+                    inject_invalid,
                     (int)st_c23,
                     (int)st_flint,
                     written_c23,
@@ -226,11 +260,13 @@ static uint32_t run_conformance_for_op(
     }
 
     printf(
-        "[CONFORMANCE] op=%s seed=0x%016llX cases=%u divergences=%u\n",
+        "[CONFORMANCE] op=%s seed=0x%016llX cases=%u error_cases=%u divergences=%u error_divergences=%u\n",
         op_name(op),
         (unsigned long long)seed,
         (unsigned)CASES_PER_OPERATION,
-        (unsigned)divergences);
+        (unsigned)error_cases,
+        (unsigned)divergences,
+        (unsigned)error_divergences);
 
     return divergences;
 }
