@@ -272,7 +272,11 @@ static uint32_t run_conformance_for_op(
 }
 
 int main(void) {
-    const uint64_t master_seed = UINT64_C(0xC23F1A77A55EED11);
+    const uint64_t fixed_seeds[] = {
+        UINT64_C(0xC23F1A77A55EED11),
+        UINT64_C(0xF11E9B0A33D4C2E7),
+        UINT64_C(0x5A17D0C4B88E7123)
+    };
     const conformance_op ops[] = {
         OP_BIGINT_ADD,
         OP_BIGINT_SUB,
@@ -284,6 +288,7 @@ int main(void) {
     mithril_context *ctx_flint = NULL;
     uint32_t total_divergences = 0u;
     size_t i;
+    size_t s;
     mithril_status st;
 
     st = mithril_init(&ctx_c23, NULL);
@@ -296,19 +301,22 @@ int main(void) {
     st = mithril_provider_activate(ctx_flint, "flint");
     expect_ok(st, "activate flint context");
 
-    for (i = 0u; i < (sizeof(ops) / sizeof(ops[0])); ++i) {
-        uint64_t op_seed = master_seed ^ (UINT64_C(0x9E3779B97F4A7C15) * (uint64_t)(i + 1u));
-        total_divergences += run_conformance_for_op(ops[i], ctx_c23, ctx_flint, op_seed);
+    for (s = 0u; s < (sizeof(fixed_seeds) / sizeof(fixed_seeds[0])); ++s) {
+        for (i = 0u; i < (sizeof(ops) / sizeof(ops[0])); ++i) {
+            uint64_t op_seed = fixed_seeds[s] ^ (UINT64_C(0x9E3779B97F4A7C15) * (uint64_t)(i + 1u));
+            total_divergences += run_conformance_for_op(ops[i], ctx_c23, ctx_flint, op_seed);
+        }
     }
 
     mithril_shutdown(ctx_c23);
     mithril_shutdown(ctx_flint);
 
     printf(
-        "[CONFORMANCE] summary cases_per_operation=%u operations=%u total_cases=%u total_divergences=%u\n",
+        "[CONFORMANCE] summary cases_per_operation=%u operations=%u seeds=%u total_cases=%u total_divergences=%u\n",
         (unsigned)CASES_PER_OPERATION,
         (unsigned)(sizeof(ops) / sizeof(ops[0])),
-        (unsigned)(CASES_PER_OPERATION * (sizeof(ops) / sizeof(ops[0]))),
+        (unsigned)(sizeof(fixed_seeds) / sizeof(fixed_seeds[0])),
+        (unsigned)(CASES_PER_OPERATION * (sizeof(ops) / sizeof(ops[0])) * (sizeof(fixed_seeds) / sizeof(fixed_seeds[0]))),
         (unsigned)total_divergences);
 
     if (total_divergences != 0u) {
