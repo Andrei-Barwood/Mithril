@@ -9,8 +9,16 @@
 #include "mithril/mithril_modarith.h"
 #include "mithril/mithril_provider.h"
 
+#ifndef MITHRIL_CONFORMANCE_CASES_PER_OPERATION
+#define MITHRIL_CONFORMANCE_CASES_PER_OPERATION 1200
+#endif
+
+#if MITHRIL_CONFORMANCE_CASES_PER_OPERATION <= 0
+#error "MITHRIL_CONFORMANCE_CASES_PER_OPERATION must be a positive integer."
+#endif
+
 enum {
-    CASES_PER_OPERATION = 1200,
+    CASES_PER_OPERATION = MITHRIL_CONFORMANCE_CASES_PER_OPERATION,
     MAX_INPUT_BYTES = 64,
     MAX_OUTPUT_BYTES = 256
 };

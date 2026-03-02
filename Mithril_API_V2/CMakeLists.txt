@@ -6,6 +6,11 @@ option(MITHRIL_ENABLE_TESTS "Build Mithril API v2 tests" ON)
 option(MITHRIL_ENABLE_PROVIDER_FLINT "Enable FLINT provider registration path" OFF)
 option(MITHRIL_USE_LIBSODIUM "Enable libsodium-backed crypto provider" ON)
 option(MITHRIL_USE_FLINT "Enable FLINT-backed bigint/modarith implementation when available" ON)
+set(
+  MITHRIL_CONFORMANCE_CASES_PER_OPERATION
+  "1200"
+  CACHE STRING
+  "Number of randomized conformance cases executed per operation in test_conformance_randomized.")
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -93,6 +98,10 @@ if(APPLE)
 endif()
 
 if(MITHRIL_ENABLE_TESTS)
+  if(NOT MITHRIL_CONFORMANCE_CASES_PER_OPERATION MATCHES "^[1-9][0-9]*$")
+    message(FATAL_ERROR "MITHRIL_CONFORMANCE_CASES_PER_OPERATION must be a positive integer.")
+  endif()
+
   enable_testing()
 
   add_executable(test_c23_bigint tests/unit/test_c23_bigint.c)
@@ -125,6 +134,10 @@ if(MITHRIL_ENABLE_TESTS)
     target_link_libraries(test_conformance_vectors PRIVATE mithril_v2)
     add_executable(test_conformance_randomized tests/integration/test_conformance_randomized.c)
     target_link_libraries(test_conformance_randomized PRIVATE mithril_v2)
+    target_compile_definitions(
+      test_conformance_randomized
+      PRIVATE
+        MITHRIL_CONFORMANCE_CASES_PER_OPERATION=${MITHRIL_CONFORMANCE_CASES_PER_OPERATION})
 
     add_test(NAME flint_bigint COMMAND test_flint_bigint)
     add_test(NAME flint_modarith COMMAND test_flint_modarith)
