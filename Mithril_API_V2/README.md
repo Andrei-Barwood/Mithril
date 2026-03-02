@@ -19,6 +19,7 @@
 11. [Troubleshooting (errores comunes)](#-troubleshooting-errores-comunes)
 12. [Roadmap sugerido](#-roadmap-sugerido)
 13. [Buenas prácticas de seguridad](#-buenas-prácticas-de-seguridad)
+14. [Documento técnico Sprint 1 FLINT](#-documento-técnico-sprint-1-flint)
 
 ---
 
@@ -43,7 +44,7 @@ Estado implementado (fases 1 → 10):
 - ✅ Utilities de memoria y operaciones constant-time
 - ✅ Provider `sodium` para RNG/HASH/AEAD/KEX/SIGN (modo estricto)
 - ✅ Provider `c23` para `bigint/modarith` (longitud arbitraria)
-- ✅ Provider `flint` integrado como esqueleto (pendiente implementación real)
+- ✅ Provider `flint` implementado en modo real para bigint/modarith (FLINT backend)
 - ✅ Tests unitarios para `c23` bigint/modarith
 - ✅ CMake + ctest funcionando
 - ✅ Scripts de build en macOS
@@ -355,3 +356,11 @@ int main(void) {
 `Mithril_API_V2` ya tiene una base sólida para evolucionar hacia una API criptográfica de producción: modular, testeable y extensible.
 
 Si vas a continuar inmediatamente, el mejor siguiente paso técnico es: **conformance tests + implementación real de `provider_flint`**. 🔥
+
+---
+
+## 📚 Documento técnico Sprint 1 FLINT
+
+Para revisión detallada de arquitectura, DoD, casos de uso, ejemplos y beneficios para infraestructura de energías limpias/no tóxicas/renovables:
+
+- `docs/SPRINT1_FLINT_IMPLEMENTACION_Y_ENERGIA_LIMPIA.md`

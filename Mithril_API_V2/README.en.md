@@ -43,7 +43,7 @@ Implemented status (phases 1 → 10):
 - ✅ Memory utilities and constant-time helpers
 - ✅ `sodium` provider for RNG/HASH/AEAD/KEX/SIGN (strict mode)
 - ✅ `c23` provider for `bigint/modarith` (arbitrary length)
-- ✅ `flint` provider integrated as skeleton (real implementation pending)
+- ✅ `flint` provider implemented with real bigint/modarith backend
 - ✅ Unit tests for `c23` bigint/modarith
 - ✅ Working CMake + ctest pipeline
 - ✅ macOS build scripts
@@ -353,3 +353,11 @@ int main(void) {
 `Mithril_API_V2` now has a practical base to evolve into a production-grade cryptographic API: modular, testable, and extensible.
 
 If you continue right away, the highest-impact next step is: **conformance tests + real `provider_flint` implementation**. 🔥
+
+---
+
+## 📚 Sprint 1 FLINT Technical Document
+
+Detailed implementation notes, usage examples, and industry-facing rationale:
+
+- `docs/SPRINT1_FLINT_IMPLEMENTACION_Y_ENERGIA_LIMPIA.md`
