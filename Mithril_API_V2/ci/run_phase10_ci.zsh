@@ -1,7 +1,8 @@
 #!/bin/zsh
 set -euo pipefail
 
-ROOT="/Users/kirtantegsingh/documents/mithril/Mithril_API_V2"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${(%):-%N}")" && pwd)"
+ROOT="${MITHRIL_ROOT:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
 BUILD_DIR="${ROOT}/build-cmake-flint"
 
 if ! pkg-config --exists flint; then
@@ -20,4 +21,6 @@ cmake -S "${ROOT}" -B "${BUILD_DIR}" \
 cmake --build "${BUILD_DIR}" --parallel
 ctest --test-dir "${BUILD_DIR}" --output-on-failure
 
-echo "Phase 10 CI run complete (FLINT mode)"
+"${SCRIPT_DIR}/generate_conformance_report.zsh" "${ROOT}" "${BUILD_DIR}"
+
+echo "Phase 10 CI run complete (FLINT mode). Report: ${BUILD_DIR}/conformance_report.md"
