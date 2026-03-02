@@ -112,10 +112,13 @@ if(MITHRIL_ENABLE_TESTS)
 
   add_executable(test_provider_activation_failure tests/integration/test_provider_activation_failure.c)
   target_link_libraries(test_provider_activation_failure PRIVATE mithril_v2)
+  add_executable(test_sodium_rng_hash tests/unit/test_sodium_rng_hash.c)
+  target_link_libraries(test_sodium_rng_hash PRIVATE mithril_v2)
 
   add_test(NAME c23_bigint COMMAND test_c23_bigint)
   add_test(NAME c23_modarith COMMAND test_c23_modarith)
   add_test(NAME provider_activation_failure COMMAND test_provider_activation_failure)
+  add_test(NAME sodium_rng_hash COMMAND test_sodium_rng_hash)
 
   if(MITHRIL_FLINT_BACKEND_ENABLED)
     add_executable(test_flint_bigint tests/unit/test_flint_bigint.c)
