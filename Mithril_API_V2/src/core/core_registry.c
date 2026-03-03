@@ -105,6 +105,7 @@ mithril_status mithril_provider_register(mithril_context *ctx, const mithril_pro
 
     if (descriptor->ops != 0 && descriptor->ops->get_capabilities != 0) {
         status = descriptor->ops->get_capabilities(descriptor->user_data, &caps);
+        status = mithril_core_normalize_lifecycle_status(status);
         if (status != MITHRIL_OK) {
             ctx->providers[slot].in_use = 0;
             return status;

@@ -24,7 +24,7 @@ mithril_status mithril_modarith_add_mod(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->modarith_add_mod(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->modarith_add_mod(
         active->descriptor.user_data,
         a,
         a_len,
@@ -34,7 +34,7 @@ mithril_status mithril_modarith_add_mod(
         modulus_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }
 
 mithril_status mithril_modarith_mul_mod(
@@ -59,7 +59,7 @@ mithril_status mithril_modarith_mul_mod(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->modarith_mul_mod(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->modarith_mul_mod(
         active->descriptor.user_data,
         a,
         a_len,
@@ -69,5 +69,5 @@ mithril_status mithril_modarith_mul_mod(
         modulus_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }

@@ -65,13 +65,13 @@ mithril_status mithril_sign_keypair(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->sign_keypair(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->sign_keypair(
         active->descriptor.user_data,
         algorithm,
         public_key,
         public_key_len,
         secret_key,
-        secret_key_len);
+        secret_key_len));
 }
 
 mithril_status mithril_sign_detached(
@@ -95,7 +95,7 @@ mithril_status mithril_sign_detached(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->sign_detached(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->sign_detached(
         active->descriptor.user_data,
         algorithm,
         message,
@@ -104,7 +104,7 @@ mithril_status mithril_sign_detached(
         secret_key_len,
         signature,
         signature_len,
-        written_len);
+        written_len));
 }
 
 mithril_status mithril_sign_verify_detached(
@@ -127,7 +127,7 @@ mithril_status mithril_sign_verify_detached(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->sign_verify_detached(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->sign_verify_detached(
         active->descriptor.user_data,
         algorithm,
         message,
@@ -135,5 +135,5 @@ mithril_status mithril_sign_verify_detached(
         public_key,
         public_key_len,
         signature,
-        signature_len);
+        signature_len));
 }

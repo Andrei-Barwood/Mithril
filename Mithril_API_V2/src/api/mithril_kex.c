@@ -65,13 +65,13 @@ mithril_status mithril_kex_keypair(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->kex_keypair(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->kex_keypair(
         active->descriptor.user_data,
         algorithm,
         public_key,
         public_key_len,
         secret_key,
-        secret_key_len);
+        secret_key_len));
 }
 
 mithril_status mithril_kex_shared_secret(
@@ -95,7 +95,7 @@ mithril_status mithril_kex_shared_secret(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->kex_shared_secret(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->kex_shared_secret(
         active->descriptor.user_data,
         algorithm,
         my_secret_key,
@@ -104,5 +104,5 @@ mithril_status mithril_kex_shared_secret(
         peer_public_key_len,
         shared_secret,
         shared_secret_len,
-        written_len);
+        written_len));
 }

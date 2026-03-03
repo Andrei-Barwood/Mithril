@@ -27,6 +27,7 @@ mithril_status mithril_provider_activate(mithril_context *ctx, const char *name)
 
     if (target->descriptor.ops != 0 && target->descriptor.ops->on_activate != 0) {
         status = target->descriptor.ops->on_activate(target->descriptor.user_data);
+        status = mithril_core_normalize_lifecycle_status(status);
         if (status != MITHRIL_OK) {
             return status;
         }

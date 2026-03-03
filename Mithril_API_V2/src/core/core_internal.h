@@ -32,6 +32,8 @@ void mithril_core_capabilities_default(mithril_capabilities *out_caps);
 
 mithril_status mithril_core_validate_provider_name(const char *name);
 mithril_status mithril_core_validate_provider_descriptor(const mithril_provider_descriptor *descriptor);
+mithril_status mithril_core_normalize_status(mithril_status status);
+mithril_status mithril_core_normalize_lifecycle_status(mithril_status status);
 
 void mithril_core_registry_init(mithril_context *ctx);
 void mithril_core_registry_shutdown(mithril_context *ctx);

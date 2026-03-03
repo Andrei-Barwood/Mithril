@@ -31,6 +31,7 @@ add_library(mithril_v2 STATIC
   src/core/core_config.c
   src/core/core_capabilities.c
   src/core/core_validation.c
+  src/core/core_status.c
   src/core/core_registry.c
   src/core/core_dispatch.c
   src/core/core_memory.c

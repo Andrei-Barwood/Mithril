@@ -36,12 +36,12 @@ mithril_status mithril_hash_compute(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->hash_compute(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->hash_compute(
         active->descriptor.user_data,
         algorithm,
         input,
         input_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }

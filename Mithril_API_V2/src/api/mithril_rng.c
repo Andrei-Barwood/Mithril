@@ -14,7 +14,8 @@ mithril_status mithril_rng_fill(mithril_context *ctx, uint8_t *out, size_t out_l
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->rng_fill(active->descriptor.user_data, out, out_len);
+    return mithril_core_normalize_status(
+        active->descriptor.crypto_ops->rng_fill(active->descriptor.user_data, out, out_len));
 }
 
 mithril_status mithril_rng_u64(mithril_context *ctx, uint64_t *out_value) {

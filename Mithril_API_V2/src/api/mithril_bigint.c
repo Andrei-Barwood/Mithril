@@ -22,7 +22,7 @@ mithril_status mithril_bigint_add(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->bigint_add(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->bigint_add(
         active->descriptor.user_data,
         a,
         a_len,
@@ -30,7 +30,7 @@ mithril_status mithril_bigint_add(
         b_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }
 
 mithril_status mithril_bigint_sub(
@@ -53,7 +53,7 @@ mithril_status mithril_bigint_sub(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->bigint_sub(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->bigint_sub(
         active->descriptor.user_data,
         a,
         a_len,
@@ -61,7 +61,7 @@ mithril_status mithril_bigint_sub(
         b_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }
 
 mithril_status mithril_bigint_mul(
@@ -84,7 +84,7 @@ mithril_status mithril_bigint_mul(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->bigint_mul(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->bigint_mul(
         active->descriptor.user_data,
         a,
         a_len,
@@ -92,5 +92,5 @@ mithril_status mithril_bigint_mul(
         b_len,
         out,
         out_len,
-        written_len);
+        written_len));
 }

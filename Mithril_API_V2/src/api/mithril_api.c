@@ -27,14 +27,14 @@ mithril_status mithril_init(mithril_context **out_ctx, const mithril_init_option
     mithril_core_capabilities_default(&ctx->capabilities);
     mithril_core_registry_init(ctx);
 
-    status = mithril_provider_sodium_register(ctx);
+    status = mithril_core_normalize_lifecycle_status(mithril_provider_sodium_register(ctx));
     if (status != MITHRIL_OK) {
         mithril_core_registry_shutdown(ctx);
         free(ctx);
         return status;
     }
 
-    status = mithril_provider_activate(ctx, "sodium");
+    status = mithril_core_normalize_lifecycle_status(mithril_provider_activate(ctx, "sodium"));
     if (status != MITHRIL_OK) {
         mithril_core_registry_shutdown(ctx);
         free(ctx);

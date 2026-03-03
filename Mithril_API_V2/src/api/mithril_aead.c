@@ -72,7 +72,7 @@ mithril_status mithril_aead_encrypt(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->aead_encrypt(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->aead_encrypt(
         active->descriptor.user_data,
         algorithm,
         key,
@@ -85,7 +85,7 @@ mithril_status mithril_aead_encrypt(
         plaintext_len,
         ciphertext,
         ciphertext_len,
-        written_len);
+        written_len));
 }
 
 mithril_status mithril_aead_decrypt(
@@ -113,7 +113,7 @@ mithril_status mithril_aead_decrypt(
         return MITHRIL_ERR_NO_PROVIDER;
     }
 
-    return active->descriptor.crypto_ops->aead_decrypt(
+    return mithril_core_normalize_status(active->descriptor.crypto_ops->aead_decrypt(
         active->descriptor.user_data,
         algorithm,
         key,
@@ -126,5 +126,5 @@ mithril_status mithril_aead_decrypt(
         ciphertext_len,
         plaintext,
         plaintext_len,
-        written_len);
+        written_len));
 }
