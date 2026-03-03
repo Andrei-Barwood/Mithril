@@ -107,7 +107,7 @@ static void test_sign_verify_negative_cases(mithril_context *ctx) {
             pk_len,
             signature,
             written_len),
-        MITHRIL_ERR_INTERNAL,
+        MITHRIL_ERR_SIGNATURE_INVALID,
         "sign_verify rejects tampered message");
 
     memcpy(tampered_signature, signature, written_len);
@@ -123,7 +123,7 @@ static void test_sign_verify_negative_cases(mithril_context *ctx) {
             pk_len,
             tampered_signature,
             written_len),
-        MITHRIL_ERR_INTERNAL,
+        MITHRIL_ERR_SIGNATURE_INVALID,
         "sign_verify rejects tampered signature");
 
     expect_status(
@@ -136,7 +136,7 @@ static void test_sign_verify_negative_cases(mithril_context *ctx) {
             pk_len,
             signature,
             written_len),
-        MITHRIL_ERR_INTERNAL,
+        MITHRIL_ERR_SIGNATURE_INVALID,
         "sign_verify rejects wrong public key");
 
     expect_status(

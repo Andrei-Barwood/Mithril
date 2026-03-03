@@ -132,7 +132,7 @@ mithril_status mithril_provider_sodium_aead_decrypt(
                 (unsigned long long)aad_len,
                 nonce,
                 key) != 0) {
-            return MITHRIL_ERR_INTERNAL;
+            return MITHRIL_ERR_AEAD_AUTH_FAILED;
         }
         *written_len = (size_t)out_len;
     }

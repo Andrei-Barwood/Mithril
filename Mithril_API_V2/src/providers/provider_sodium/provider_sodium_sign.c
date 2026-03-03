@@ -118,7 +118,7 @@ mithril_status mithril_provider_sodium_sign_verify_detached(
 
 #if defined(MITHRIL_USE_LIBSODIUM)
     if (crypto_sign_verify_detached(signature, message, (unsigned long long)message_len, public_key) != 0) {
-        return MITHRIL_ERR_INTERNAL;
+        return MITHRIL_ERR_SIGNATURE_INVALID;
     }
     return MITHRIL_OK;
 #else

@@ -109,7 +109,7 @@ static void test_aead_roundtrip(mithril_context *ctx) {
         plaintext_out,
         sizeof(plaintext_out),
         &pt_written);
-    expect_status(st, MITHRIL_ERR_INTERNAL, "aead_decrypt rejects tampered ciphertext");
+    expect_status(st, MITHRIL_ERR_AEAD_AUTH_FAILED, "aead_decrypt rejects tampered ciphertext");
 
     expect_status(
         mithril_aead_encrypt(
