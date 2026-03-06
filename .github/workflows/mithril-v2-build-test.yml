@@ -1,0 +1,68 @@
+name: mithril-v2-build-test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "Mithril_API_V2/**"
+      - ".github/workflows/mithril-v2-build-test.yml"
+  push:
+    branches:
+      - codex/mithril-v2-sprints
+    paths:
+      - "Mithril_API_V2/**"
+      - ".github/workflows/mithril-v2-build-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: Mithril_API_V2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config zsh libflint-dev libsodium-dev
+
+      - name: Configure
+        run: |
+          set -o pipefail
+          cmake -S . -B build-cmake-flint \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DMITHRIL_ENABLE_TESTS=ON \
+            -DMITHRIL_USE_LIBSODIUM=ON \
+            -DMITHRIL_ENABLE_PROVIDER_FLINT=ON \
+            -DMITHRIL_USE_FLINT=ON \
+            2>&1 | tee build-cmake-flint/configure.log
+
+      - name: Build
+        run: |
+          set -o pipefail
+          cmake --build build-cmake-flint --parallel 2>&1 | tee build-cmake-flint/build.log
+
+      - name: Test
+        run: |
+          set -o pipefail
+          ctest --test-dir build-cmake-flint --output-on-failure 2>&1 | tee build-cmake-flint/ctest.log
+
+      - name: Upload build/test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mithril-v2-build-test-logs
+          path: |
+            Mithril_API_V2/build-cmake-flint/configure.log
+            Mithril_API_V2/build-cmake-flint/build.log
+            Mithril_API_V2/build-cmake-flint/ctest.log
+          if-no-files-found: warn
