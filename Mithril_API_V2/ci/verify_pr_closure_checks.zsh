@@ -7,6 +7,7 @@ HEAD_OWNER="${HEAD_OWNER:-${OWNER}}"
 HEAD_BRANCH="${HEAD_BRANCH:-codex/mithril-v2-sprints}"
 BASE_BRANCH="${BASE_BRANCH:-main}"
 CHECKLIST_TEXT="${CHECKLIST_TEXT:-Merge solo al cerrar Sprint 9}"
+REQUIRED_CHECK_CONTEXT="${REQUIRED_CHECK_CONTEXT:-ci-required-gate}"
 
 API="https://api.github.com/repos/${OWNER}/${REPO}"
 
@@ -72,13 +73,14 @@ if [ "${http_code}" = "200" ]; then
   require_reviews="$(jq -r '.required_pull_request_reviews != null' "${protection_tmp}")"
   approvals="$(jq -r '.required_pull_request_reviews.required_approving_review_count // 0' "${protection_tmp}")"
   require_checks="$(jq -r '.required_status_checks != null' "${protection_tmp}")"
+  has_required_context="$(jq -r --arg ctx "${REQUIRED_CHECK_CONTEXT}" '(.required_status_checks.contexts // []) | index($ctx) != null' "${protection_tmp}")"
 
-  if [ "${require_reviews}" = "true" ] && [ "${require_checks}" = "true" ] && [ "${approvals}" -ge 1 ]; then
+  if [ "${require_reviews}" = "true" ] && [ "${require_checks}" = "true" ] && [ "${approvals}" -ge 1 ] && [ "${has_required_context}" = "true" ]; then
     check3_status="PASS"
-    check3_detail="PR required, status checks required, approvals=${approvals}"
+    check3_detail="PR required, status checks required, approvals=${approvals}, required_context=${REQUIRED_CHECK_CONTEXT}"
   else
     check3_status="FAIL"
-    check3_detail="required_reviews=${require_reviews}, required_status_checks=${require_checks}, approvals=${approvals}"
+    check3_detail="required_reviews=${require_reviews}, required_status_checks=${require_checks}, approvals=${approvals}, has_required_context=${has_required_context}, required_context=${REQUIRED_CHECK_CONTEXT}"
   fi
 elif [ "${http_code}" = "401" ] || [ "${http_code}" = "403" ]; then
   check3_status="UNVERIFIED"

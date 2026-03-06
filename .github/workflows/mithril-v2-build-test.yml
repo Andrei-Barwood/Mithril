@@ -107,3 +107,18 @@ jobs:
             Mithril_API_V2/build-cmake-flint/build.log
             Mithril_API_V2/build-cmake-flint/ctest.log
           if-no-files-found: warn
+
+  ci-required-gate:
+    name: ci-required-gate
+    runs-on: ubuntu-24.04
+    needs: [build-test]
+    if: ${{ always() }}
+    steps:
+      - name: Enforce matrix success
+        run: |
+          echo "build-test result: ${{ needs.build-test.result }}"
+          if [[ "${{ needs.build-test.result }}" != "success" ]]; then
+            echo "[ERROR] One or more build-test matrix jobs failed."
+            exit 1
+          fi
+          echo "[OK] ci-required-gate passed."
