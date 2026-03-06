@@ -48,12 +48,12 @@ cmake -S . -B build-cmake-flint \
 | `sodium_sub_with_underflow` | Implementada en adapter | `mithril_bigint_sub` + politica underflow | Mantiene contrato v1: si `a < b` devuelve `(b-a)-1` y `E_SODIUM_UFL`. |
 | `fmpz_mul_safe` | Implementada en adapter (solo FLINT) | `mithril_bigint_mul` | Disponible cuando `MITHRIL_USE_FLINT` esta habilitado. |
 | `fmpz_square_safe` | Implementada en adapter (solo FLINT) | `mithril_bigint_mul(a,a)` | Disponible cuando `MITHRIL_USE_FLINT` esta habilitado. |
-| `fmpz_inc` | Pendiente | Nativo v2: `bigint_add` con `+1` | Se recomienda wrapper dedicado en Sprint 6.x. |
-| `fmpz_inc_inplace` | Pendiente | Igual que `fmpz_inc` | Requiere mantener semantica in-place v1. |
-| `fmpz_inc_mod` | Pendiente | `mithril_modarith_add_mod` con `+1 mod m` | Debe conservar contrato de retorno legacy. |
-| `fmpz_dec` | Pendiente | `mithril_bigint_sub` con `-1` | Falta definir politica de underflow legacy exacta. |
-| `fmpz_sub_ushort` | Pendiente | `mithril_bigint_sub` | Requiere adaptacion de tipos (`ushort` -> bytes). |
-| `fmpz_mul_ui_mod` | Pendiente | `mithril_modarith_mul_mod` | Requiere adaptacion (`ulong` -> bytes). |
+| `fmpz_inc` | Implementada en adapter (solo FLINT) | `mithril_bigint_add` con `+1` | Mantiene retorno legacy `E_FMPZ_OK` en exito. |
+| `fmpz_inc_inplace` | Implementada en adapter (solo FLINT) | Igual que `fmpz_inc` | Conserva semantica in-place. |
+| `fmpz_inc_mod` | Implementada en adapter (solo FLINT) | `mithril_modarith_add_mod` con `+1 mod m` | Requiere modulo positivo. |
+| `fmpz_dec` | Implementada en adapter (solo FLINT) | `mithril_bigint_sub` con `-1` | Conserva underflow legacy (`a=0 -> -1`, `E_FMPZ_UFL`). |
+| `fmpz_sub_ushort` | Implementada en adapter (solo FLINT) | `mithril_bigint_sub` + ajuste de signo | Soporta resultado negativo cuando `a < b`. |
+| `fmpz_mul_ui_mod` | Implementada en adapter (solo FLINT) | `mithril_bigint_mul` + `mithril_modarith_mul_mod` | Conserva flag legacy `E_FLINT_OFL` cuando aplica reduccion. |
 | `div_fmpz` | Diferida | N/A en v2 actual | v2 no expone division entera publica. |
 | `rem_mod_pow_of_2` | Diferida | N/A en v2 actual | v2 no expone primitiva bitwise `mod 2^k`. |
 | `flint_kmul` | Diferida | N/A en v2 actual | Operacion de nivel interno/optimizada de FLINT. |
