@@ -1,0 +1,423 @@
+#include "mithril/compat/mithril_v1_compat.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "mithril/mithril_api.h"
+#include "mithril/mithril_bigint.h"
+#include "mithril/mithril_error.h"
+#include "mithril/mithril_modarith.h"
+#include "mithril/mithril_provider.h"
+#include "mithril_v1_compat_internal.h"
+
+#if defined(MITHRIL_USE_FLINT)
+#include <flint/fmpz.h>
+#include "../providers/provider_flint/provider_flint_internal.h"
+#endif
+
+const uint8_t mithril_v1_ed25519_order_l_be[MITHRIL_V1_COMPAT_SCALAR_BYTES] = {
+    0x10u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,
+    0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u, 0x00u,
+    0x14u, 0xDEu, 0xF9u, 0xDEu, 0xA2u, 0xF7u, 0x9Cu, 0xD6u,
+    0x58u, 0x12u, 0x63u, 0x1Au, 0x5Cu, 0xF5u, 0xD3u, 0xEDu
+};
+
+static mithril_context *g_v1_ctx = NULL;
+
+static int mithril_v1_activate_math_provider(mithril_context *ctx) {
+    mithril_status st;
+
+#if defined(MITHRIL_ENABLE_PROVIDER_FLINT) && defined(MITHRIL_USE_FLINT)
+    st = mithril_provider_activate(ctx, "flint");
+    if (st == MITHRIL_OK) {
+        return 1;
+    }
+#endif
+
+    st = mithril_provider_activate(ctx, "c23");
+    if (st == MITHRIL_OK) {
+        return 1;
+    }
+
+    st = mithril_provider_activate(ctx, "flint");
+    if (st == MITHRIL_OK) {
+        return 1;
+    }
+
+    return 0;
+}
+
+static int mithril_v1_ensure_math_context(mithril_context **out_ctx) {
+    if (out_ctx == NULL) {
+        return 0;
+    }
+
+    if (mithril_v1_compat_init() != 0) {
+        return 0;
+    }
+
+    *out_ctx = g_v1_ctx;
+    return 1;
+}
+
+static void mithril_v1_reverse_copy(uint8_t *out, const uint8_t *in, size_t len) {
+    size_t i;
+
+    for (i = 0u; i < len; ++i) {
+        out[i] = in[len - 1u - i];
+    }
+}
+
+static int mithril_v1_be_to_fixed_le(
+    const uint8_t *be,
+    size_t be_len,
+    uint8_t *out_le,
+    size_t fixed_len,
+    int *overflow) {
+    size_t copy_len;
+    size_t offset;
+    size_t i;
+
+    if (be == NULL || out_le == NULL || fixed_len == 0u) {
+        return 0;
+    }
+
+    memset(out_le, 0, fixed_len);
+    copy_len = (be_len > fixed_len) ? fixed_len : be_len;
+    offset = be_len - copy_len;
+
+    if (overflow != NULL) {
+        *overflow = 0;
+        for (i = 0u; i < offset; ++i) {
+            if (be[i] != 0u) {
+                *overflow = 1;
+                break;
+            }
+        }
+    }
+
+    for (i = 0u; i < copy_len; ++i) {
+        out_le[i] = be[be_len - 1u - i];
+    }
+
+    return 1;
+}
+
+static int mithril_v1_cmp_le(const uint8_t *a, const uint8_t *b, size_t len) {
+    size_t i;
+
+    for (i = len; i > 0u; --i) {
+        uint8_t av = a[i - 1u];
+        uint8_t bv = b[i - 1u];
+        if (av < bv) {
+            return -1;
+        }
+        if (av > bv) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static void mithril_v1_sub_one_le(uint8_t *value, size_t len) {
+    size_t i;
+
+    for (i = 0u; i < len; ++i) {
+        if (value[i] > 0u) {
+            value[i] = (uint8_t)(value[i] - 1u);
+            return;
+        }
+        value[i] = 0xFFu;
+    }
+}
+
+static int mithril_v1_bigint_sub_fixed_le(
+    mithril_context *ctx,
+    const uint8_t *x_le,
+    const uint8_t *y_le,
+    size_t len,
+    uint8_t *out_le) {
+    uint8_t *x_be;
+    uint8_t *y_be;
+    uint8_t *raw_be;
+    size_t raw_len = 0u;
+    mithril_status st;
+    int ok = 0;
+
+    x_be = (uint8_t *)calloc(len, 1u);
+    y_be = (uint8_t *)calloc(len, 1u);
+    raw_be = (uint8_t *)calloc(len + 1u, 1u);
+    if (x_be == NULL || y_be == NULL || raw_be == NULL) {
+        goto cleanup;
+    }
+
+    mithril_v1_reverse_copy(x_be, x_le, len);
+    mithril_v1_reverse_copy(y_be, y_le, len);
+
+    st = mithril_bigint_sub(ctx, x_be, len, y_be, len, raw_be, len + 1u, &raw_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    if (!mithril_v1_be_to_fixed_le(raw_be, raw_len, out_le, len, NULL)) {
+        goto cleanup;
+    }
+
+    ok = 1;
+
+cleanup:
+    free(x_be);
+    free(y_be);
+    free(raw_be);
+    return ok;
+}
+
+#if defined(MITHRIL_USE_FLINT)
+static int mithril_v1_fmpz_to_be_alloc(const fmpz_t value, uint8_t **out, size_t *out_len) {
+    size_t bits;
+    size_t capacity;
+    mithril_status st;
+
+    if (out == NULL || out_len == NULL) {
+        return 0;
+    }
+
+    if (fmpz_sgn(value) < 0) {
+        return 0;
+    }
+
+    bits = (size_t)fmpz_bits(value);
+    capacity = (bits == 0u) ? 1u : ((bits + 7u) / 8u);
+
+    *out = (uint8_t *)calloc(capacity, 1u);
+    if (*out == NULL) {
+        return 0;
+    }
+
+    st = mithril_flint_fmpz_to_be(value, *out, capacity, out_len);
+    if (st != MITHRIL_OK) {
+        free(*out);
+        *out = NULL;
+        *out_len = 0u;
+        return 0;
+    }
+
+    return 1;
+}
+#endif
+
+int mithril_v1_compat_init(void) {
+    mithril_status st;
+
+    if (g_v1_ctx != NULL) {
+        return mithril_v1_activate_math_provider(g_v1_ctx) ? 0 : -1;
+    }
+
+    st = mithril_init(&g_v1_ctx, NULL);
+    if (st != MITHRIL_OK) {
+        g_v1_ctx = NULL;
+        return -1;
+    }
+
+    if (!mithril_v1_activate_math_provider(g_v1_ctx)) {
+        mithril_shutdown(g_v1_ctx);
+        g_v1_ctx = NULL;
+        return -1;
+    }
+
+    return 0;
+}
+
+void mithril_v1_compat_shutdown(void) {
+    if (g_v1_ctx != NULL) {
+        mithril_shutdown(g_v1_ctx);
+        g_v1_ctx = NULL;
+    }
+}
+
+int mithril_add_scalar(
+    uint8_t result[MITHRIL_SCALAR_BYTES],
+    const uint8_t a[MITHRIL_SCALAR_BYTES],
+    const uint8_t b[MITHRIL_SCALAR_BYTES]) {
+    mithril_context *ctx;
+    uint8_t a_be[MITHRIL_SCALAR_BYTES];
+    uint8_t b_be[MITHRIL_SCALAR_BYTES];
+    uint8_t sum_be[MITHRIL_SCALAR_BYTES + 1u];
+    size_t sum_len = 0u;
+    int overflow = 0;
+    mithril_status st;
+
+    if (result == NULL || a == NULL || b == NULL) {
+        return -1;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    mithril_v1_reverse_copy(a_be, a, MITHRIL_SCALAR_BYTES);
+    mithril_v1_reverse_copy(b_be, b, MITHRIL_SCALAR_BYTES);
+
+    st = mithril_bigint_add(
+        ctx,
+        a_be,
+        MITHRIL_SCALAR_BYTES,
+        b_be,
+        MITHRIL_SCALAR_BYTES,
+        sum_be,
+        sizeof(sum_be),
+        &sum_len);
+    if (st != MITHRIL_OK) {
+        return -1;
+    }
+
+    if (!mithril_v1_be_to_fixed_le(sum_be, sum_len, result, MITHRIL_SCALAR_BYTES, &overflow)) {
+        return -1;
+    }
+
+    return overflow ? 1 : 0;
+}
+
+int mithril_add_mod_l(
+    uint8_t result[MITHRIL_SCALAR_BYTES],
+    const uint8_t a[MITHRIL_SCALAR_BYTES],
+    const uint8_t b[MITHRIL_SCALAR_BYTES]) {
+    mithril_context *ctx;
+    uint8_t a_be[MITHRIL_SCALAR_BYTES];
+    uint8_t b_be[MITHRIL_SCALAR_BYTES];
+    uint8_t out_be[MITHRIL_SCALAR_BYTES];
+    size_t out_len = 0u;
+    mithril_status st;
+
+    if (result == NULL || a == NULL || b == NULL) {
+        return -1;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    mithril_v1_reverse_copy(a_be, a, MITHRIL_SCALAR_BYTES);
+    mithril_v1_reverse_copy(b_be, b, MITHRIL_SCALAR_BYTES);
+
+    st = mithril_modarith_add_mod(
+        ctx,
+        a_be,
+        MITHRIL_SCALAR_BYTES,
+        b_be,
+        MITHRIL_SCALAR_BYTES,
+        mithril_v1_ed25519_order_l_be,
+        MITHRIL_SCALAR_BYTES,
+        out_be,
+        sizeof(out_be),
+        &out_len);
+    if (st != MITHRIL_OK) {
+        return -1;
+    }
+
+    if (!mithril_v1_be_to_fixed_le(out_be, out_len, result, MITHRIL_SCALAR_BYTES, NULL)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int mithril_add_constant_time(uint8_t *result, const uint8_t *a, const uint8_t *b, size_t len) {
+    size_t i;
+    uint16_t carry = 0u;
+
+    if (result == NULL || a == NULL || b == NULL || len == 0u) {
+        return -1;
+    }
+
+    for (i = 0u; i < len; ++i) {
+        uint16_t sum = (uint16_t)a[i] + (uint16_t)b[i] + carry;
+        result[i] = (uint8_t)(sum & 0xFFu);
+        carry = (uint16_t)(sum >> 8u);
+    }
+
+    return (carry != 0u) ? 1 : 0;
+}
+
+int sodium_sub_with_underflow(unsigned char *result, const unsigned char *a, const unsigned char *b, size_t len) {
+    mithril_context *ctx;
+    int cmp;
+
+    if (result == NULL || a == NULL || b == NULL || len == 0u) {
+        return -1;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    cmp = mithril_v1_cmp_le(a, b, len);
+    if (cmp >= 0) {
+        if (!mithril_v1_bigint_sub_fixed_le(ctx, a, b, len, result)) {
+            return -1;
+        }
+        return E_SODIUM_OK;
+    }
+
+    if (!mithril_v1_bigint_sub_fixed_le(ctx, b, a, len, result)) {
+        return -1;
+    }
+
+    mithril_v1_sub_one_le(result, len);
+    return E_SODIUM_UFL;
+}
+
+#if defined(MITHRIL_USE_FLINT)
+int fmpz_mul_safe(fmpz_t result, const fmpz_t a, const fmpz_t b) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *b_be = NULL;
+    uint8_t *out_be = NULL;
+    size_t a_len = 0u;
+    size_t b_len = 0u;
+    size_t out_len = 0u;
+    size_t out_cap;
+    mithril_status st;
+    int rc = -1;
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup;
+    }
+    if (!mithril_v1_fmpz_to_be_alloc(b, &b_be, &b_len)) {
+        goto cleanup;
+    }
+
+    out_cap = a_len + b_len + 1u;
+    out_be = (uint8_t *)calloc(out_cap, 1u);
+    if (out_be == NULL) {
+        goto cleanup;
+    }
+
+    st = mithril_bigint_mul(ctx, a_be, a_len, b_be, b_len, out_be, out_cap, &out_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    st = mithril_flint_fmpz_from_be(out_be, out_len, result);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    rc = 0;
+
+cleanup:
+    free(a_be);
+    free(b_be);
+    free(out_be);
+    return rc;
+}
+
+int fmpz_square_safe(fmpz_t result, const fmpz_t input) {
+    return fmpz_mul_safe(result, input, input);
+}
+#endif

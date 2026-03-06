@@ -28,6 +28,7 @@ add_library(mithril_v2 STATIC
   src/api/mithril_sign.c
   src/api/mithril_bigint.c
   src/api/mithril_modarith.c
+  src/compat/mithril_v1_compat.c
   src/core/core_config.c
   src/core/core_capabilities.c
   src/core/core_validation.c
@@ -121,6 +122,8 @@ if(MITHRIL_ENABLE_TESTS)
   target_link_libraries(test_sodium_sign PRIVATE mithril_v2)
   add_executable(test_error_contracts tests/integration/test_error_contracts.c)
   target_link_libraries(test_error_contracts PRIVATE mithril_v2)
+  add_executable(test_v1_compat_smoke tests/integration/test_v1_compat_smoke.c)
+  target_link_libraries(test_v1_compat_smoke PRIVATE mithril_v2)
 
   add_test(NAME c23_bigint COMMAND test_c23_bigint)
   add_test(NAME c23_modarith COMMAND test_c23_modarith)
@@ -129,6 +132,7 @@ if(MITHRIL_ENABLE_TESTS)
   add_test(NAME sodium_aead_kex COMMAND test_sodium_aead_kex)
   add_test(NAME sodium_sign COMMAND test_sodium_sign)
   add_test(NAME error_contracts COMMAND test_error_contracts)
+  add_test(NAME v1_compat_smoke COMMAND test_v1_compat_smoke)
 
   if(MITHRIL_FLINT_BACKEND_ENABLED)
     add_executable(test_flint_bigint tests/unit/test_flint_bigint.c)
