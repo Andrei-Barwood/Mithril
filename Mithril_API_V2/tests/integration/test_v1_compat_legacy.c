@@ -290,6 +290,83 @@ static void test_fmpz_wrappers_extended(void) {
     fmpz_clear(b);
     fmpz_clear(result);
 }
+
+static void test_fmpz_secondary_wrappers(void) {
+    fmpz_t a;
+    fmpz_t mod;
+    fmpz_t result;
+    int rc;
+
+    fmpz_init(a);
+    fmpz_init(mod);
+    fmpz_init(result);
+
+    fmpz_set_ui(a, 41u);
+    rc = fmpz_inc(result, a);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_cmp_ui(result, 42u) == 0);
+
+    fmpz_set_ui(a, 9u);
+    rc = fmpz_inc_inplace(a);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_cmp_ui(a, 10u) == 0);
+
+    fmpz_set_ui(a, 9u);
+    fmpz_set_ui(mod, 10u);
+    rc = fmpz_inc_mod(result, a, mod);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_is_zero(result));
+
+    fmpz_set_ui(a, 5u);
+    rc = fmpz_dec(a);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_cmp_ui(a, 4u) == 0);
+
+    fmpz_zero(a);
+    rc = fmpz_dec(a);
+    assert(rc == E_FMPZ_UFL);
+    assert(fmpz_cmp_si(a, -1) == 0);
+
+    fmpz_set_ui(a, 1000u);
+    rc = fmpz_sub_ushort(result, a, 7u);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_cmp_ui(result, 993u) == 0);
+
+    fmpz_set_ui(a, 5u);
+    rc = fmpz_sub_ushort(result, a, 7u);
+    assert(rc == E_FMPZ_OK);
+    assert(fmpz_cmp_si(result, -2) == 0);
+
+    fmpz_set_ui(a, 5u);
+    fmpz_set_ui(mod, 100u);
+    rc = fmpz_mul_ui_mod(result, a, 3u, mod);
+    assert(rc == E_FLINT_OK);
+    assert(fmpz_cmp_ui(result, 15u) == 0);
+
+    fmpz_set_ui(a, 50u);
+    rc = fmpz_mul_ui_mod(result, a, 3u, mod);
+    assert(rc == E_FLINT_OFL);
+    assert(fmpz_cmp_ui(result, 50u) == 0);
+
+    fmpz_zero(mod);
+    rc = fmpz_mul_ui_mod(result, a, 3u, mod);
+    assert(rc == -1);
+
+    fmpz_set_si(a, -3);
+    fmpz_set_ui(mod, 11u);
+    rc = fmpz_inc(result, a);
+    assert(rc == -1);
+    rc = fmpz_sub_ushort(result, a, 2u);
+    assert(rc == -1);
+    rc = fmpz_inc_mod(result, a, mod);
+    assert(rc == -1);
+    rc = fmpz_mul_ui_mod(result, a, 3u, mod);
+    assert(rc == -1);
+
+    fmpz_clear(a);
+    fmpz_clear(mod);
+    fmpz_clear(result);
+}
 #endif
 
 int main(void) {
@@ -301,6 +378,7 @@ int main(void) {
     test_add_mod_l_vectors();
 #if defined(MITHRIL_USE_FLINT)
     test_fmpz_wrappers_extended();
+    test_fmpz_secondary_wrappers();
 #endif
 
     mithril_v1_compat_shutdown();
