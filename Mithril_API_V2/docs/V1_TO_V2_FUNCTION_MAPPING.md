@@ -6,9 +6,9 @@ Documentar la migracion de clientes legacy `v1` hacia `Mithril_API_V2`, con foco
 
 1. compatibilidad inmediata por adapter (`mithril/compat/mithril_v1_compat.h`)
 2. reemplazo nativo progresivo sobre API `v2`
-3. funciones legacy pendientes o diferidas
+3. funciones legacy pendientes y fuera de alcance runtime
 
-Estado de referencia: Sprint 6 (minifases 0, 1 y 2).
+Estado de referencia: Sprint 6 + Sprint 6.x (wrappers diferidos FLINT).
 
 ## Ubicacion del adapter
 
@@ -54,10 +54,10 @@ cmake -S . -B build-cmake-flint \
 | `fmpz_dec` | Implementada en adapter (solo FLINT) | `mithril_bigint_sub` con `-1` | Conserva underflow legacy (`a=0 -> -1`, `E_FMPZ_UFL`). |
 | `fmpz_sub_ushort` | Implementada en adapter (solo FLINT) | `mithril_bigint_sub` + ajuste de signo | Soporta resultado negativo cuando `a < b`. |
 | `fmpz_mul_ui_mod` | Implementada en adapter (solo FLINT) | `mithril_bigint_mul` + `mithril_modarith_mul_mod` | Conserva flag legacy `E_FLINT_OFL` cuando aplica reduccion. |
-| `div_fmpz` | Diferida | N/A en v2 actual | v2 no expone division entera publica. |
-| `rem_mod_pow_of_2` | Diferida | N/A en v2 actual | v2 no expone primitiva bitwise `mod 2^k`. |
-| `flint_kmul` | Diferida | N/A en v2 actual | Operacion de nivel interno/optimizada de FLINT. |
-| `flint_kmul_limbs` | Diferida | N/A en v2 actual | Requiere API de limbs no disponible en v2. |
+| `div_fmpz` | Implementada en adapter (solo FLINT) | Wrapper FLINT directo | Conserva contrato legacy: `-1` en division por cero. |
+| `rem_mod_pow_of_2` | Implementada en adapter (solo FLINT) | Wrapper FLINT directo | Conserva semantica `x mod 2^k`. |
+| `flint_kmul` | Implementada en adapter (solo FLINT) | Wrapper FLINT directo (`fmpz_mul`) | Mantiene resultado exacto sobre enteros arbitrarios. |
+| `flint_kmul_limbs` | Implementada en adapter (solo FLINT) | Reconstruccion por limbs + `fmpz_mul` | Compatible con entradas limb-based legacy. |
 | `mithril_get_all_operations` | Fuera de alcance runtime | N/A | Pertenece a tooling de framework legacy. |
 | `mithril_get_operations_count` | Fuera de alcance runtime | N/A | Pertenece a tooling de framework legacy. |
 | `mithril_generate_*` | Fuera de alcance runtime | N/A | Generacion de templates/codigo, no API criptografica runtime. |
@@ -136,5 +136,6 @@ int native_entry(void) {
 
 - `tests/integration/test_v1_compat_smoke.c`
 - `tests/integration/test_v1_compat_legacy.c`
+- `tests/integration/test_v1_compat_deferred_flint.c`
 
 Los tests validan contratos legacy e integracion de wrappers en build con y sin FLINT.
