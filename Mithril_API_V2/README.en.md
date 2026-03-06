@@ -19,6 +19,7 @@
 11. [Troubleshooting (common errors)](#-troubleshooting-common-errors)
 12. [Suggested roadmap](#-suggested-roadmap)
 13. [Security best practices](#-security-best-practices)
+14. [v1 -> v2 Migration](#-v1---v2-migration)
 
 ---
 
@@ -237,6 +238,21 @@ Current coverage:
 - modular add/mul with reduction (`c23`)
 - invalid modulus edge case
 - non-trivial input lengths
+
+---
+
+## 🔁 v1 -> v2 Migration
+
+Official function-by-function mapping guide:
+
+- `docs/V1_TO_V2_FUNCTION_MAPPING.md`
+
+It includes:
+
+- legacy function status (`implemented`, `pending`, `deferred`)
+- recommended v2 replacements
+- contract differences (endianness, error model, context/provider)
+- progressive migration examples
 
 ---
 

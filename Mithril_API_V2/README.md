@@ -20,6 +20,7 @@
 12. [Roadmap sugerido](#-roadmap-sugerido)
 13. [Buenas prácticas de seguridad](#-buenas-prácticas-de-seguridad)
 14. [Documento técnico Sprint 1 FLINT](#-documento-técnico-sprint-1-flint)
+15. [Migracion v1 -> v2](#-migracion-v1---v2)
 
 ---
 
@@ -238,6 +239,21 @@ Cobertura funcional actual:
 - suma/multiplicación modular con reducción (c23)
 - casos límite de módulo inválido
 - casos de longitudes no triviales
+
+---
+
+## 🔁 Migracion v1 -> v2
+
+Guia oficial de mapeo funcion por funcion:
+
+- `docs/V1_TO_V2_FUNCTION_MAPPING.md`
+
+Incluye:
+
+- estado de cada funcion legacy (`implementada`, `pendiente`, `diferida`)
+- reemplazo recomendado en API v2
+- diferencias de contrato (endianness, errores, contexto/provider)
+- ejemplos de migracion progresiva
 
 ---
 
