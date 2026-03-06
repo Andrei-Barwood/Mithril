@@ -46,6 +46,8 @@ int sodium_sub_with_underflow(
     size_t len);
 
 #if defined(MITHRIL_USE_FLINT)
+#include <gmp.h>
+#include <flint/flint.h>
 #include <flint/fmpz.h>
 
 #ifndef E_FMPZ_OK
@@ -76,6 +78,15 @@ int fmpz_inc_mod(fmpz_t result, const fmpz_t a, const fmpz_t mod);
 int fmpz_dec(fmpz_t a);
 int fmpz_sub_ushort(fmpz_t result, const fmpz_t a, unsigned short b);
 int fmpz_mul_ui_mod(fmpz_t result, const fmpz_t a, ulong b, const fmpz_t modulus);
+int div_fmpz(fmpz_t quot, fmpz_t rem, const fmpz_t dividend, const fmpz_t divisor);
+void rem_mod_pow_of_2(const fmpz_t x, ulong k, fmpz_t res);
+void flint_kmul(const fmpz_t a, const fmpz_t b, fmpz_t result);
+void flint_kmul_limbs(
+    const mp_limb_t *a_limbs,
+    slong a_size,
+    const mp_limb_t *b_limbs,
+    slong b_size,
+    fmpz_t result);
 #endif
 
 #ifdef __cplusplus

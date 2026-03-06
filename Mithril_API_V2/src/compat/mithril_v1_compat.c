@@ -237,6 +237,25 @@ static int mithril_v1_ulong_to_be_alloc(ulong value, uint8_t **out, size_t *out_
     *out_len = len;
     return 1;
 }
+
+static void mithril_v1_fmpz_from_limbs(
+    fmpz_t out,
+    const mp_limb_t *limbs,
+    slong limb_count) {
+    slong i;
+
+    fmpz_zero(out);
+    if (limbs == NULL || limb_count <= 0) {
+        return;
+    }
+
+    for (i = limb_count - 1; i >= 0; --i) {
+        fmpz_mul_2exp(out, out, (ulong)FLINT_BITS);
+        if (limbs[i] != (mp_limb_t)0) {
+            fmpz_add_ui(out, out, (ulong)limbs[i]);
+        }
+    }
+}
 #endif
 
 int mithril_v1_compat_init(void) {
@@ -773,5 +792,54 @@ cleanup_preinit:
     free(mul_be);
     free(red_be);
     return rc;
+}
+
+int div_fmpz(fmpz_t quot, fmpz_t rem, const fmpz_t dividend, const fmpz_t divisor) {
+    if (fmpz_is_zero(divisor)) {
+        return -1;
+    }
+
+    if (fmpz_is_zero(dividend)) {
+        fmpz_zero(quot);
+        fmpz_zero(rem);
+        return 0;
+    }
+
+    fmpz_tdiv_qr(quot, rem, dividend, divisor);
+    return 0;
+}
+
+void rem_mod_pow_of_2(const fmpz_t x, ulong k, fmpz_t res) {
+    fmpz_t mod;
+
+    fmpz_init(mod);
+    fmpz_set_ui(mod, 1uL);
+    fmpz_mul_2exp(mod, mod, k);
+    fmpz_mod(res, x, mod);
+    fmpz_clear(mod);
+}
+
+void flint_kmul(const fmpz_t a, const fmpz_t b, fmpz_t result) {
+    fmpz_mul(result, a, b);
+}
+
+void flint_kmul_limbs(
+    const mp_limb_t *a_limbs,
+    slong a_size,
+    const mp_limb_t *b_limbs,
+    slong b_size,
+    fmpz_t result) {
+    fmpz_t a;
+    fmpz_t b;
+
+    fmpz_init(a);
+    fmpz_init(b);
+
+    mithril_v1_fmpz_from_limbs(a, a_limbs, a_size);
+    mithril_v1_fmpz_from_limbs(b, b_limbs, b_size);
+    fmpz_mul(result, a, b);
+
+    fmpz_clear(a);
+    fmpz_clear(b);
 }
 #endif
