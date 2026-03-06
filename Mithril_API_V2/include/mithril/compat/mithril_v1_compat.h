@@ -48,8 +48,34 @@ int sodium_sub_with_underflow(
 #if defined(MITHRIL_USE_FLINT)
 #include <flint/fmpz.h>
 
+#ifndef E_FMPZ_OK
+#define E_FMPZ_OK 0
+#endif
+
+#ifndef E_FMPZ_OFL
+#define E_FMPZ_OFL 1
+#endif
+
+#ifndef E_FMPZ_UFL
+#define E_FMPZ_UFL -1
+#endif
+
+#ifndef E_FLINT_OK
+#define E_FLINT_OK 0
+#endif
+
+#ifndef E_FLINT_OFL
+#define E_FLINT_OFL 1
+#endif
+
 int fmpz_mul_safe(fmpz_t result, const fmpz_t a, const fmpz_t b);
 int fmpz_square_safe(fmpz_t result, const fmpz_t input);
+int fmpz_inc(fmpz_t result, const fmpz_t a);
+int fmpz_inc_inplace(fmpz_t a);
+int fmpz_inc_mod(fmpz_t result, const fmpz_t a, const fmpz_t mod);
+int fmpz_dec(fmpz_t a);
+int fmpz_sub_ushort(fmpz_t result, const fmpz_t a, unsigned short b);
+int fmpz_mul_ui_mod(fmpz_t result, const fmpz_t a, ulong b, const fmpz_t modulus);
 #endif
 
 #ifdef __cplusplus

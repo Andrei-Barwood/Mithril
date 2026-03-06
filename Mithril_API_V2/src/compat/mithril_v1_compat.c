@@ -205,6 +205,38 @@ static int mithril_v1_fmpz_to_be_alloc(const fmpz_t value, uint8_t **out, size_t
 
     return 1;
 }
+
+static int mithril_v1_ulong_to_be_alloc(ulong value, uint8_t **out, size_t *out_len) {
+    ulong tmp = value;
+    size_t len = 0u;
+    size_t i;
+
+    if (out == NULL || out_len == NULL) {
+        return 0;
+    }
+
+    if (tmp == 0u) {
+        len = 1u;
+    } else {
+        while (tmp > 0u) {
+            ++len;
+            tmp >>= 8u;
+        }
+    }
+
+    *out = (uint8_t *)calloc(len, 1u);
+    if (*out == NULL) {
+        return 0;
+    }
+
+    for (i = 0u; i < len; ++i) {
+        (*out)[len - 1u - i] = (uint8_t)(value & 0xFFu);
+        value >>= 8u;
+    }
+
+    *out_len = len;
+    return 1;
+}
 #endif
 
 int mithril_v1_compat_init(void) {
@@ -419,5 +451,327 @@ cleanup:
 
 int fmpz_square_safe(fmpz_t result, const fmpz_t input) {
     return fmpz_mul_safe(result, input, input);
+}
+
+int fmpz_inc(fmpz_t result, const fmpz_t a) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *out_be = NULL;
+    size_t a_len = 0u;
+    size_t out_len = 0u;
+    const uint8_t one_be[] = {0x01u};
+    mithril_status st;
+    int rc = -1;
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup;
+    }
+
+    out_be = (uint8_t *)calloc(a_len + 1u, 1u);
+    if (out_be == NULL) {
+        goto cleanup;
+    }
+
+    st = mithril_bigint_add(ctx, a_be, a_len, one_be, sizeof(one_be), out_be, a_len + 1u, &out_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    st = mithril_flint_fmpz_from_be(out_be, out_len, result);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    rc = E_FMPZ_OK;
+
+cleanup:
+    free(a_be);
+    free(out_be);
+    return rc;
+}
+
+int fmpz_inc_inplace(fmpz_t a) {
+    return fmpz_inc(a, a);
+}
+
+int fmpz_inc_mod(fmpz_t result, const fmpz_t a, const fmpz_t mod) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *mod_be = NULL;
+    uint8_t *out_be = NULL;
+    size_t a_len = 0u;
+    size_t mod_len = 0u;
+    size_t out_len = 0u;
+    size_t out_cap;
+    const uint8_t one_be[] = {0x01u};
+    mithril_status st;
+    int rc = -1;
+
+    if (fmpz_sgn(mod) <= 0) {
+        return -1;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup;
+    }
+    if (!mithril_v1_fmpz_to_be_alloc(mod, &mod_be, &mod_len)) {
+        goto cleanup;
+    }
+
+    out_cap = ((a_len > mod_len) ? a_len : mod_len) + 1u;
+    out_be = (uint8_t *)calloc(out_cap, 1u);
+    if (out_be == NULL) {
+        goto cleanup;
+    }
+
+    st = mithril_modarith_add_mod(
+        ctx,
+        a_be,
+        a_len,
+        one_be,
+        sizeof(one_be),
+        mod_be,
+        mod_len,
+        out_be,
+        out_cap,
+        &out_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    st = mithril_flint_fmpz_from_be(out_be, out_len, result);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    rc = E_FMPZ_OK;
+
+cleanup:
+    free(a_be);
+    free(mod_be);
+    free(out_be);
+    return rc;
+}
+
+int fmpz_dec(fmpz_t a) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *out_be = NULL;
+    size_t a_len = 0u;
+    size_t out_len = 0u;
+    const uint8_t one_be[] = {0x01u};
+    mithril_status st;
+    int rc = E_FMPZ_UFL;
+
+    if (fmpz_is_zero(a)) {
+        fmpz_set_si(a, -1);
+        return E_FMPZ_UFL;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return E_FMPZ_UFL;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup;
+    }
+
+    out_be = (uint8_t *)calloc(a_len, 1u);
+    if (out_be == NULL) {
+        goto cleanup;
+    }
+
+    st = mithril_bigint_sub(ctx, a_be, a_len, one_be, sizeof(one_be), out_be, a_len, &out_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    st = mithril_flint_fmpz_from_be(out_be, out_len, a);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    rc = E_FMPZ_OK;
+
+cleanup:
+    free(a_be);
+    free(out_be);
+    return rc;
+}
+
+int fmpz_sub_ushort(fmpz_t result, const fmpz_t a, unsigned short b) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *b_be = NULL;
+    uint8_t *out_be = NULL;
+    size_t a_len = 0u;
+    size_t b_len = 0u;
+    size_t out_len = 0u;
+    size_t out_cap;
+    fmpz_t b_f;
+    mithril_status st;
+    int rc = -1;
+    int cmp;
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup_preinit;
+    }
+    if (!mithril_v1_ulong_to_be_alloc((ulong)b, &b_be, &b_len)) {
+        goto cleanup_preinit;
+    }
+
+    out_cap = ((a_len > b_len) ? a_len : b_len);
+    if (out_cap == 0u) {
+        out_cap = 1u;
+    }
+    out_be = (uint8_t *)calloc(out_cap, 1u);
+    if (out_be == NULL) {
+        goto cleanup_preinit;
+    }
+
+    fmpz_init(b_f);
+    fmpz_set_ui(b_f, (ulong)b);
+    cmp = fmpz_cmp(a, b_f);
+
+    if (cmp >= 0) {
+        st = mithril_bigint_sub(ctx, a_be, a_len, b_be, b_len, out_be, out_cap, &out_len);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+        st = mithril_flint_fmpz_from_be(out_be, out_len, result);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+    } else {
+        st = mithril_bigint_sub(ctx, b_be, b_len, a_be, a_len, out_be, out_cap, &out_len);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+        st = mithril_flint_fmpz_from_be(out_be, out_len, result);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+        fmpz_neg(result, result);
+    }
+
+    rc = E_FMPZ_OK;
+
+cleanup:
+    fmpz_clear(b_f);
+cleanup_preinit:
+    free(a_be);
+    free(b_be);
+    free(out_be);
+    return rc;
+}
+
+int fmpz_mul_ui_mod(fmpz_t result, const fmpz_t a, ulong b, const fmpz_t modulus) {
+    mithril_context *ctx;
+    uint8_t *a_be = NULL;
+    uint8_t *b_be = NULL;
+    uint8_t *mod_be = NULL;
+    uint8_t *mul_be = NULL;
+    uint8_t *red_be = NULL;
+    size_t a_len = 0u;
+    size_t b_len = 0u;
+    size_t mod_len = 0u;
+    size_t mul_len = 0u;
+    size_t red_len = 0u;
+    size_t mul_cap;
+    size_t red_cap;
+    mithril_status st;
+    fmpz_t mul_f;
+    int rc = -1;
+    int overflow_flag = E_FLINT_OK;
+
+    if (fmpz_sgn(modulus) <= 0) {
+        return -1;
+    }
+
+    if (!mithril_v1_ensure_math_context(&ctx)) {
+        return -1;
+    }
+
+    if (!mithril_v1_fmpz_to_be_alloc(a, &a_be, &a_len)) {
+        goto cleanup_preinit;
+    }
+    if (!mithril_v1_ulong_to_be_alloc(b, &b_be, &b_len)) {
+        goto cleanup_preinit;
+    }
+    if (!mithril_v1_fmpz_to_be_alloc(modulus, &mod_be, &mod_len)) {
+        goto cleanup_preinit;
+    }
+
+    mul_cap = a_len + b_len + 1u;
+    mul_be = (uint8_t *)calloc(mul_cap, 1u);
+    if (mul_be == NULL) {
+        goto cleanup_preinit;
+    }
+
+    st = mithril_bigint_mul(ctx, a_be, a_len, b_be, b_len, mul_be, mul_cap, &mul_len);
+    if (st != MITHRIL_OK) {
+        goto cleanup_preinit;
+    }
+
+    fmpz_init(mul_f);
+    st = mithril_flint_fmpz_from_be(mul_be, mul_len, mul_f);
+    if (st != MITHRIL_OK) {
+        goto cleanup;
+    }
+
+    if (fmpz_cmp(mul_f, modulus) >= 0) {
+        overflow_flag = E_FLINT_OFL;
+        red_cap = mod_len + 1u;
+        red_be = (uint8_t *)calloc(red_cap, 1u);
+        if (red_be == NULL) {
+            goto cleanup;
+        }
+
+        st = mithril_modarith_mul_mod(
+            ctx,
+            a_be,
+            a_len,
+            b_be,
+            b_len,
+            mod_be,
+            mod_len,
+            red_be,
+            red_cap,
+            &red_len);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+
+        st = mithril_flint_fmpz_from_be(red_be, red_len, result);
+        if (st != MITHRIL_OK) {
+            goto cleanup;
+        }
+    } else {
+        fmpz_set(result, mul_f);
+    }
+
+    rc = overflow_flag;
+
+cleanup:
+    fmpz_clear(mul_f);
+cleanup_preinit:
+    free(a_be);
+    free(b_be);
+    free(mod_be);
+    free(mul_be);
+    free(red_be);
+    return rc;
 }
 #endif
