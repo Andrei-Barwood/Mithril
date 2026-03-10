@@ -6,6 +6,7 @@
 
 #if defined(MITHRIL_USE_FLINT)
 #include <gmp.h>
+#include <flint/flint.h>
 #include <flint/fmpz.h>
 
 static void test_div_fmpz_basic(void) {
