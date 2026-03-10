@@ -78,6 +78,7 @@ jobs:
       - name: Configure
         run: |
           set -o pipefail
+          mkdir -p build-cmake-flint
           cmake -S . -B build-cmake-flint \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             ${CCACHE_CMAKE_ARG} \
