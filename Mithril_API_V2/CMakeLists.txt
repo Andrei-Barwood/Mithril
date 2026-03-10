@@ -169,5 +169,30 @@ if(MITHRIL_ENABLE_TESTS)
     add_test(NAME output_bounds COMMAND test_output_bounds)
     add_test(NAME conformance_vectors COMMAND test_conformance_vectors)
     add_test(NAME conformance_randomized COMMAND test_conformance_randomized)
+
+    # On Linux linkers with --as-needed can drop transitive FLINT dependencies
+    # from the static core library. Link FLINT explicitly on test executables.
+    foreach(mithril_test_target
+      test_c23_bigint
+      test_c23_modarith
+      test_provider_activation_failure
+      test_sodium_rng_hash
+      test_sodium_aead_kex
+      test_sodium_sign
+      test_error_contracts
+      test_v1_compat_smoke
+      test_v1_compat_legacy
+      test_v1_compat_deferred_flint
+      test_flint_bigint
+      test_flint_modarith
+      test_provider_switch
+      test_provider_switch_stress
+      test_output_bounds
+      test_conformance_vectors
+      test_conformance_randomized)
+      if(TARGET ${mithril_test_target})
+        target_link_libraries(${mithril_test_target} PRIVATE PkgConfig::FLINT)
+      endif()
+    endforeach()
   endif()
 endif()
