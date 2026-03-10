@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y zsh cmake pkg-config libflint-dev libsodium-dev
+          sudo apt-get install -y zsh cmake pkg-config libflint-dev libgmp-dev libsodium-dev
 
       - name: Run extended conformance (FLINT)
         run: |
