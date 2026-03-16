@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 
 #include <array>
+#include <csignal>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -33,14 +34,14 @@ public:
 
     asio::awaitable<void> start() {
         try {
-            std::cout << "[session] new connection from " << remote_endpoint_ << "\n";
+            std::cout << "[session] new connection from " << remote_endpoint_ << std::endl;
             co_await perform_key_exchange();
             co_await handle_encrypted_communication();
         } catch (const std::exception &e) {
-            std::cerr << "[session] error: " << e.what() << "\n";
+            std::cerr << "[session] error: " << e.what() << std::endl;
         }
 
-        std::cout << "[session] closed " << remote_endpoint_ << "\n";
+        std::cout << "[session] closed " << remote_endpoint_ << std::endl;
     }
 
 private:
@@ -62,11 +63,12 @@ private:
         auto shared_secret = kex.derive_shared_secret(peer_pubkey);
         crypto_ = std::make_unique<AuthenticatedEncryption>(shared_secret);
 
-        std::cout << "[session] secure channel established\n";
+        std::cout << "[session] secure channel established" << std::endl;
     }
 
     asio::awaitable<void> handle_encrypted_communication() {
         while (true) {
+            std::cout << "[session] waiting message length..." << std::endl;
             uint32_t message_length = 0u;
             co_await asio::async_read(
                 socket_,
@@ -83,10 +85,11 @@ private:
                 socket_,
                 asio::buffer(encrypted_message),
                 asio::use_awaitable);
+            std::cout << "[session] encrypted payload received (" << encrypted_message.size() << " bytes)" << std::endl;
 
             auto plaintext = crypto_->decrypt(encrypted_message);
             std::string message(plaintext.begin(), plaintext.end());
-            std::cout << "[session] recv: \"" << message << "\"\n";
+            std::cout << "[session] recv: \"" << message << "\"" << std::endl;
 
             std::string response = "Echo: " + message;
             std::vector<uint8_t> response_data(response.begin(), response.end());
@@ -98,6 +101,7 @@ private:
                 asio::buffer(encrypted_response)};
 
             co_await asio::async_write(socket_, buffers, asio::use_awaitable);
+            std::cout << "[session] response sent (" << encrypted_response.size() << " bytes)" << std::endl;
         }
     }
 
@@ -117,17 +121,23 @@ public:
         constexpr int kBacklogSize = 30;
         acceptor_.listen(kBacklogSize);
 
+        mithril::network::compat::enforce_supported_crypto_path();
         std::cout << "[server] transport backend: "
-                  << mithril::network::compat::backend_name() << "\n";
-        std::cout << "[server] Mithril secure server (v2 wrapper)\n";
-        std::cout << "[server] listening on 0.0.0.0:" << port_ << "\n";
+                  << mithril::network::compat::backend_name() << std::endl;
+        std::cout << "[server] crypto path: "
+                  << mithril::network::compat::active_crypto_path() << std::endl;
+        std::cout << "[server] Mithril secure server (v2 wrapper)" << std::endl;
+        std::cout << "[server] listening on 0.0.0.0:" << port_ << std::endl;
 
         while (true) {
             auto socket = co_await acceptor_.async_accept(asio::use_awaitable);
-            std::cout << "[server] accepted " << socket.remote_endpoint() << "\n";
+            std::cout << "[server] accepted " << socket.remote_endpoint() << std::endl;
 
             auto session = std::make_shared<SecureSession>(std::move(socket));
-            asio::co_spawn(io_ctx_, session->start(), asio::detached);
+            asio::co_spawn(
+                io_ctx_,
+                [session]() -> asio::awaitable<void> { co_await session->start(); },
+                asio::detached);
         }
     }
 
@@ -139,28 +149,33 @@ private:
 
 int main() {
     try {
+#if defined(SIGPIPE)
+        std::signal(SIGPIPE, SIG_IGN);
+#endif
         constexpr uint16_t kPort = 3333;
 
         asio::io_context io_ctx;
         SecureAcceptor server(io_ctx, kPort);
+        bool failed = false;
 
         asio::co_spawn(
             io_ctx,
             server.run(),
-            [](std::exception_ptr e) {
+            [&failed](std::exception_ptr e) {
                 if (e) {
                     try {
                         std::rethrow_exception(e);
                     } catch (const std::exception &ex) {
-                        std::cerr << "[server] fatal: " << ex.what() << "\n";
+                        std::cerr << "[server] fatal: " << ex.what() << std::endl;
+                        failed = true;
                     }
                 }
             });
 
         io_ctx.run();
-        return 0;
+        return failed ? 1 : 0;
     } catch (const std::exception &e) {
-        std::cerr << "[server] startup error: " << e.what() << "\n";
+        std::cerr << "[server] startup error: " << e.what() << std::endl;
         return 1;
     }
 }

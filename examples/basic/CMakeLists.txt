@@ -8,6 +8,8 @@ include(FetchContent)
 
 set(MITHRIL_REPO_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
 set(MITHRIL_V2_ARCHIVE "${MITHRIL_REPO_ROOT}/Mithril_API_V2/build-cmake/libmithril_v2.a")
+option(MITHRIL_CONSUMER_PATH_V2_DEFAULT "Default consumer crypto path to v2" ON)
+option(MITHRIL_ENABLE_V1_COMPAT_PATH "Allow selecting legacy v1 consumer path" OFF)
 
 find_path(MITHRIL_ASIO_INCLUDE_DIR asio.hpp)
 if(NOT MITHRIL_ASIO_INCLUDE_DIR)
@@ -26,6 +28,16 @@ add_library(mithril_boost_asio_compat STATIC
 )
 target_compile_features(mithril_boost_asio_compat PUBLIC cxx_std_20)
 target_compile_definitions(mithril_boost_asio_compat PUBLIC ASIO_STANDALONE)
+if(MITHRIL_CONSUMER_PATH_V2_DEFAULT)
+  target_compile_definitions(mithril_boost_asio_compat PUBLIC MITHRIL_CONSUMER_PATH_V2_DEFAULT=1)
+else()
+  target_compile_definitions(mithril_boost_asio_compat PUBLIC MITHRIL_CONSUMER_PATH_V2_DEFAULT=0)
+endif()
+if(MITHRIL_ENABLE_V1_COMPAT_PATH)
+  target_compile_definitions(mithril_boost_asio_compat PUBLIC MITHRIL_ENABLE_V1_COMPAT_PATH=1)
+else()
+  target_compile_definitions(mithril_boost_asio_compat PUBLIC MITHRIL_ENABLE_V1_COMPAT_PATH=0)
+endif()
 target_include_directories(mithril_boost_asio_compat
   PUBLIC
     "${MITHRIL_REPO_ROOT}/network/include"

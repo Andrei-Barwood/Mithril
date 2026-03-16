@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 
 #include <array>
+#include <csignal>
 #include <chrono>
 #include <iostream>
 #include <memory>
@@ -30,24 +31,23 @@ public:
         : io_ctx_(io_ctx), socket_(io_ctx) {}
 
     asio::awaitable<void> connect_and_communicate(const std::string &host, const std::string &port) {
-        try {
-            std::cout << "[client] transport backend: "
-                      << mithril::network::compat::backend_name() << "\n";
-            std::cout << "[client] resolving " << host << ":" << port << "\n";
-            tcp::resolver resolver(io_ctx_);
-            auto endpoints = co_await resolver.async_resolve(host, port, asio::use_awaitable);
+        mithril::network::compat::enforce_supported_crypto_path();
+        std::cout << "[client] transport backend: "
+                  << mithril::network::compat::backend_name() << "\n";
+        std::cout << "[client] crypto path: "
+                  << mithril::network::compat::active_crypto_path() << "\n";
+        std::cout << "[client] resolving " << host << ":" << port << "\n";
+        tcp::resolver resolver(io_ctx_);
+        auto endpoints = co_await resolver.async_resolve(host, port, asio::use_awaitable);
 
-            std::cout << "[client] connecting...\n";
-            co_await asio::async_connect(socket_, endpoints, asio::use_awaitable);
-            std::cout << "[client] connected to " << socket_.remote_endpoint() << "\n";
+        std::cout << "[client] connecting...\n";
+        co_await asio::async_connect(socket_, endpoints, asio::use_awaitable);
+        std::cout << "[client] connected to " << socket_.remote_endpoint() << "\n";
 
-            co_await perform_key_exchange();
-            co_await send_encrypted_messages();
+        co_await perform_key_exchange();
+        co_await send_encrypted_messages();
 
-            std::cout << "[client] session complete\n";
-        } catch (const std::exception &e) {
-            std::cerr << "[client] error: " << e.what() << "\n";
-        }
+        std::cout << "[client] session complete\n";
     }
 
 private:
@@ -85,14 +85,17 @@ private:
             std::vector<uint8_t> plaintext(message.begin(), message.end());
             auto encrypted = crypto_->encrypt(plaintext);
 
+            std::cout << "[client] sending encrypted message (" << encrypted.size() << " bytes)" << std::endl;
             uint32_t length = htonl(static_cast<uint32_t>(encrypted.size()));
             std::array<asio::const_buffer, 2> buffers{
                 asio::buffer(&length, sizeof(length)),
                 asio::buffer(encrypted)};
 
             co_await asio::async_write(socket_, buffers, asio::use_awaitable);
+            std::cout << "[client] write complete" << std::endl;
 
             uint32_t response_length = 0u;
+            std::cout << "[client] waiting response length..." << std::endl;
             co_await asio::async_read(
                 socket_,
                 asio::buffer(&response_length, sizeof(response_length)),
@@ -108,6 +111,7 @@ private:
                 socket_,
                 asio::buffer(encrypted_response),
                 asio::use_awaitable);
+            std::cout << "[client] response payload received (" << encrypted_response.size() << " bytes)" << std::endl;
 
             auto decrypted = crypto_->decrypt(encrypted_response);
             std::string response(decrypted.begin(), decrypted.end());
@@ -126,6 +130,9 @@ private:
 
 int main(int argc, char *argv[]) {
     try {
+#if defined(SIGPIPE)
+        std::signal(SIGPIPE, SIG_IGN);
+#endif
         if (argc != 3) {
             std::cerr << "usage: " << argv[0] << " <host> <port>\n";
             return 1;
@@ -133,22 +140,24 @@ int main(int argc, char *argv[]) {
 
         asio::io_context io_ctx;
         SecureClient client(io_ctx);
+        bool failed = false;
 
         asio::co_spawn(
             io_ctx,
             client.connect_and_communicate(argv[1], argv[2]),
-            [](std::exception_ptr e) {
+            [&failed](std::exception_ptr e) {
                 if (e) {
                     try {
                         std::rethrow_exception(e);
                     } catch (const std::exception &ex) {
                         std::cerr << "[client] fatal: " << ex.what() << "\n";
+                        failed = true;
                     }
                 }
             });
 
         io_ctx.run();
-        return 0;
+        return failed ? 1 : 0;
     } catch (const std::exception &e) {
         std::cerr << "[client] startup error: " << e.what() << "\n";
         return 1;
