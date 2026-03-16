@@ -17,8 +17,8 @@
 #include <vector>
 
 #include <mithril/mithril_sodium.hpp>
+#include <mithril/boost_asio_compat.hpp>
 
-namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 using mithril::sodium::AuthenticatedEncryption;
 using mithril::sodium::KeyExchange;
@@ -31,6 +31,8 @@ public:
 
     asio::awaitable<void> connect_and_communicate(const std::string &host, const std::string &port) {
         try {
+            std::cout << "[client] transport backend: "
+                      << mithril::network::compat::backend_name() << "\n";
             std::cout << "[client] resolving " << host << ":" << port << "\n";
             tcp::resolver resolver(io_ctx_);
             auto endpoints = co_await resolver.async_resolve(host, port, asio::use_awaitable);

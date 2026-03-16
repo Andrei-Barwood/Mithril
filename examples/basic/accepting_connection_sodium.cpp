@@ -18,8 +18,8 @@
 #include <vector>
 
 #include <mithril/mithril_sodium.hpp>
+#include <mithril/boost_asio_compat.hpp>
 
-namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 using mithril::sodium::AuthenticatedEncryption;
 using mithril::sodium::KeyExchange;
@@ -117,6 +117,8 @@ public:
         constexpr int kBacklogSize = 30;
         acceptor_.listen(kBacklogSize);
 
+        std::cout << "[server] transport backend: "
+                  << mithril::network::compat::backend_name() << "\n";
         std::cout << "[server] Mithril secure server (v2 wrapper)\n";
         std::cout << "[server] listening on 0.0.0.0:" << port_ << "\n";
 
