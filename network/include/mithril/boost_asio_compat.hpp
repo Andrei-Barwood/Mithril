@@ -10,6 +10,8 @@ namespace mithril::network::compat {
 const char *backend_name() noexcept;
 const char *default_crypto_path() noexcept;
 bool v1_compat_path_enabled() noexcept;
+std::string rollout_summary();
+void enforce_rollout_policy();
 std::string active_crypto_path();
 void enforce_supported_crypto_path();
 
