@@ -1,0 +1,180 @@
+name: mithril-v2-build-test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "Mithril_API_V2/**"
+      - "examples/**"
+      - "network/**"
+      - ".github/workflows/mithril-v2-build-test.yml"
+  push:
+    branches:
+      - codex/mithril-v2-sprints
+    paths:
+      - "Mithril_API_V2/**"
+      - "examples/**"
+      - "network/**"
+      - ".github/workflows/mithril-v2-build-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: build-test (${{ matrix.os }} / flint=${{ matrix.use_flint }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            use_flint: "ON"
+          - os: ubuntu-24.04
+            use_flint: "OFF"
+          - os: macos-14
+            use_flint: "OFF"
+    defaults:
+      run:
+        shell: bash
+        working-directory: Mithril_API_V2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config zsh ccache libsodium-dev
+          if [[ "${{ matrix.use_flint }}" == "ON" ]]; then
+            sudo apt-get install -y libflint-dev libgmp-dev
+          fi
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install cmake pkg-config ccache libsodium
+
+      - name: Configure ccache
+        run: |
+          if command -v ccache >/dev/null 2>&1; then
+            echo "CCACHE_AVAILABLE=1" >> "$GITHUB_ENV"
+            echo "CCACHE_CMAKE_ARG=-DCMAKE_C_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
+          else
+            echo "CCACHE_AVAILABLE=0" >> "$GITHUB_ENV"
+            echo "CCACHE_CMAKE_ARG=" >> "$GITHUB_ENV"
+          fi
+
+      - name: Cache ccache
+        if: env.CCACHE_AVAILABLE == '1'
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.use_flint }}-${{ hashFiles('Mithril_API_V2/CMakeLists.txt', 'Mithril_API_V2/src/**', 'Mithril_API_V2/include/**', 'Mithril_API_V2/tests/**') }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-${{ matrix.use_flint }}-
+
+      - name: Configure
+        run: |
+          set -o pipefail
+          mkdir -p build-cmake-flint
+          ccache_cmake_args=()
+          if [[ -n "${CCACHE_CMAKE_ARG:-}" ]]; then
+            ccache_cmake_args+=("${CCACHE_CMAKE_ARG}")
+          fi
+          cmake -S . -B build-cmake-flint \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            "${ccache_cmake_args[@]}" \
+            -DMITHRIL_ENABLE_TESTS=ON \
+            -DMITHRIL_USE_LIBSODIUM=ON \
+            -DMITHRIL_ENABLE_PROVIDER_FLINT=ON \
+            -DMITHRIL_USE_FLINT=${{ matrix.use_flint }} \
+            2>&1 | tee build-cmake-flint/configure.log
+
+      - name: Build
+        run: |
+          set -o pipefail
+          cmake --build build-cmake-flint --parallel 2>&1 | tee build-cmake-flint/build.log
+
+      - name: Test
+        run: |
+          set -o pipefail
+          ctest --test-dir build-cmake-flint --output-on-failure 2>&1 | tee build-cmake-flint/ctest.log
+
+      - name: Upload build/test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mithril-v2-build-test-logs-${{ matrix.os }}-flint-${{ matrix.use_flint }}
+          path: |
+            Mithril_API_V2/build-cmake-flint/configure.log
+            Mithril_API_V2/build-cmake-flint/build.log
+            Mithril_API_V2/build-cmake-flint/ctest.log
+          if-no-files-found: warn
+
+  consumers-smoke:
+    name: consumers-smoke (ubuntu-24.04)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake pkg-config libsodium-dev curl ca-certificates
+
+      - name: "Guardrail: migrated consumers must not include sodium.h directly"
+        run: |
+          set -euo pipefail
+          targets=(
+            "examples/basic/secure_client.cpp"
+            "examples/basic/accepting_connection_sodium.cpp"
+          )
+          if grep -nE '#include[[:space:]]*<sodium\.h>' "${targets[@]}"; then
+            echo "[ERROR] Direct sodium.h include detected in migrated consumers."
+            exit 1
+          fi
+          echo "[OK] No direct sodium.h includes in migrated consumers."
+
+      - name: Build and test migrated consumers
+        run: |
+          set -o pipefail
+          make -C examples/basic clean
+          make -C examples/basic test 2>&1 | tee examples/basic/sprint7_consumers_smoke.log
+
+      - name: Upload consumers smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint7-consumers-smoke-logs
+          path: |
+            examples/basic/sprint7_consumers_smoke.log
+            examples/basic/server_test.log
+            examples/basic/client_test.log
+          if-no-files-found: warn
+
+  ci-required-gate:
+    name: ci-required-gate
+    runs-on: ubuntu-24.04
+    needs: [build-test, consumers-smoke]
+    if: ${{ always() }}
+    steps:
+      - name: Enforce required job success
+        run: |
+          echo "build-test result: ${{ needs.build-test.result }}"
+          echo "consumers-smoke result: ${{ needs.consumers-smoke.result }}"
+          if [[ "${{ needs.build-test.result }}" != "success" ]]; then
+            echo "[ERROR] One or more build-test matrix jobs failed."
+            exit 1
+          fi
+          if [[ "${{ needs.consumers-smoke.result }}" != "success" ]]; then
+            echo "[ERROR] consumers-smoke failed."
+            exit 1
+          fi
+          echo "[OK] ci-required-gate passed."

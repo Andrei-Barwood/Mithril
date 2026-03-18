@@ -1,0 +1,18 @@
+# CMake/build outputs
+build/
+build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+Testing/
+
+# Local binaries/libraries
+*.o
+*.a
+*.so
+*.dylib
+
+# macOS
+.DS_Store

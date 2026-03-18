@@ -1,5 +1,7 @@
 # Build artifacts
 build/
+examples/build-cmake-v2/
+network/third_party/
 *.o
 *.a
 *.so
@@ -21,4 +23,3 @@ certs/*.crt
 
 # macOS
 .DS_Store
-

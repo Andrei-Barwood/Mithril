@@ -12,6 +12,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef MITHRIL_V1_DEPRECATED
+#if defined(__clang__) || defined(__GNUC__)
+#define MITHRIL_V1_DEPRECATED __attribute__((deprecated("Mithril v1 is deprecated; migrate to Mithril_API_V2.")))
+#else
+#define MITHRIL_V1_DEPRECATED
+#endif
+#endif
+
 // Constantes para tamaños seguros
 #define MITHRIL_SCALAR_BYTES 32  // 256 bits - estándar para Curve25519/Ed25519
 
@@ -22,7 +30,7 @@
  * @param b Segundo operando (32 bytes)
  * @return 0 en éxito, -1 en error, 1 si hay overflow
  */
-int mithril_add_scalar(
+MITHRIL_V1_DEPRECATED int mithril_add_scalar(
     uint8_t result[MITHRIL_SCALAR_BYTES],
     const uint8_t a[MITHRIL_SCALAR_BYTES],
     const uint8_t b[MITHRIL_SCALAR_BYTES]
@@ -35,7 +43,7 @@ int mithril_add_scalar(
  * @param b Segundo operando
  * @return 0 en éxito
  */
-int mithril_add_mod_l(
+MITHRIL_V1_DEPRECATED int mithril_add_mod_l(
     uint8_t result[crypto_core_ed25519_SCALARBYTES],
     const uint8_t a[crypto_core_ed25519_SCALARBYTES],
     const uint8_t b[crypto_core_ed25519_SCALARBYTES]
@@ -50,7 +58,7 @@ int mithril_add_mod_l(
  * @param len Longitud en bytes
  * @return 1 si hubo carry, 0 si no
  */
-int mithril_add_constant_time(
+MITHRIL_V1_DEPRECATED int mithril_add_constant_time(
     uint8_t *result,
     const uint8_t *a,
     const uint8_t *b,

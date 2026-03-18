@@ -1,0 +1,38 @@
+name: mithril-v2-conformance-nightly
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance-nightly:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: Mithril_API_V2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh cmake pkg-config libflint-dev libgmp-dev libsodium-dev
+
+      - name: Run extended conformance (FLINT)
+        run: |
+          chmod +x ci/*.zsh
+          MITHRIL_CONFORMANCE_CASES_PER_OPERATION=10000 ci/run_conformance_extended_nightly.zsh
+
+      - name: Upload conformance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mithril-v2-conformance-report
+          path: Mithril_API_V2/build-cmake-flint-nightly/conformance_report.md
+          if-no-files-found: error
