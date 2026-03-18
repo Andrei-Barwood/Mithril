@@ -1,5 +1,13 @@
 # Mithril
 
+## Release Status (2026-03-18)
+
+1. Primary stable line: `Mithril_API_V2` (`v2.0.0`).
+2. Legacy line: `Mithril_Criptography_API` (v1) is deprecated and in limited maintenance mode.
+3. Migration references:
+   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
+
 ## Overview
 
 Mithril is a cryptographic API security layer specifically designed for IoT devices in the electricity generation industry. The project implements FLINT (Fast Library for Number Theory) to provide robust cryptographic protection for critical infrastructure systems, with a particular focus on securing tidal energy generation networks and IoT sensor arrays.
