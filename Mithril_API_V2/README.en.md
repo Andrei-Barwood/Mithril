@@ -39,6 +39,7 @@
 
 Implemented status (phases 1 → 10):
 
+- ✅ Stable line declared: `v2.0.0`
 - ✅ Core API/context/config/capabilities
 - ✅ Active-provider dispatch layer
 - ✅ Memory utilities and constant-time helpers
@@ -48,6 +49,11 @@ Implemented status (phases 1 → 10):
 - ✅ Unit tests for `c23` bigint/modarith
 - ✅ Working CMake + ctest pipeline
 - ✅ macOS build scripts
+
+Formal release and migration notes:
+
+- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+- `/Users/kirtantegsingh/documents/mithril/CHANGELOG.md`
 
 ---
 

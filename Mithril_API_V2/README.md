@@ -40,6 +40,7 @@
 
 Estado implementado (fases 1 → 10):
 
+- ✅ Línea estable declarada: `v2.0.0`
 - ✅ Núcleo API/context/config/capabilities
 - ✅ Dispatch por provider activo
 - ✅ Utilities de memoria y operaciones constant-time
@@ -49,6 +50,11 @@ Estado implementado (fases 1 → 10):
 - ✅ Tests unitarios para `c23` bigint/modarith
 - ✅ CMake + ctest funcionando
 - ✅ Scripts de build en macOS
+
+Notas formales de release y migración:
+
+- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+- `/Users/kirtantegsingh/documents/mithril/CHANGELOG.md`
 
 ---
 
