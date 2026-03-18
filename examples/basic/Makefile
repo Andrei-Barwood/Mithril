@@ -46,9 +46,11 @@ endif
 
 SERVER := accepting_connection_sodium
 CLIENT := secure_client
+ROLLOUT_TEST := test_rollout_toggles
+TELEMETRY_TEST := test_crypto_telemetry
 COMPAT_SRC := $(ROOT_DIR)/network/src/boost_asio_compat.cpp
 
-.PHONY: all clean run-server run-client test help check-deps ensure-asio ensure-v2 clean-third-party
+.PHONY: all clean run-server run-client test test-sprint8 help check-deps ensure-asio ensure-v2 clean-third-party
 
 all: check-deps ensure-asio ensure-v2 $(SERVER) $(CLIENT)
 
@@ -115,6 +117,16 @@ $(CLIENT): secure_client.cpp $(COMPAT_SRC) ensure-asio ensure-v2
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) $(LIBS) -o $@
 	@echo "[build] done: ./$(CLIENT)"
 
+$(ROLLOUT_TEST): test_rollout_toggles.cpp $(COMPAT_SRC) ensure-asio
+	@echo "[build] compiling $(ROLLOUT_TEST)..."
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) -o $@
+	@echo "[build] done: ./$(ROLLOUT_TEST)"
+
+$(TELEMETRY_TEST): test_crypto_telemetry.cpp $(COMPAT_SRC) ensure-asio ensure-v2
+	@echo "[build] compiling $(TELEMETRY_TEST)..."
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) $(LIBS) -o $@
+	@echo "[build] done: ./$(TELEMETRY_TEST)"
+
 # ============================================================================
 # Run targets
 # ============================================================================
@@ -129,7 +141,13 @@ run-client: $(CLIENT)
 # Testing
 # ============================================================================
 
-test: all
+test-sprint8: $(ROLLOUT_TEST) $(TELEMETRY_TEST)
+	@echo "[test] running sprint 8 rollout toggles"
+	@./$(ROLLOUT_TEST)
+	@echo "[test] running sprint 8 telemetry hooks"
+	@./$(TELEMETRY_TEST)
+
+test: all test-sprint8
 	@echo "[test] starting integration test"
 	@./$(SERVER) > ./server_test.log 2>&1 & SERVER_PID=$$!; \
 	sleep 1; \
@@ -155,7 +173,7 @@ test: all
 
 clean:
 	@echo "[clean] removing local binaries"
-	@rm -f $(SERVER) $(CLIENT)
+	@rm -f $(SERVER) $(CLIENT) $(ROLLOUT_TEST) $(TELEMETRY_TEST)
 	@rm -rf *.dSYM
 
 clean-third-party:
@@ -171,6 +189,7 @@ help:
 	@echo "  make                 -> build server + client"
 	@echo "  make run-server      -> run secure server"
 	@echo "  make run-client      -> run secure client"
+	@echo "  make test-sprint8    -> run rollout and telemetry ops tests"
 	@echo "  make test            -> integration test"
 	@echo "  make clean           -> remove built binaries"
 	@echo "  make clean-third-party -> remove vendored Asio"

@@ -14,9 +14,12 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <memory>
 #include <span>
 #include <stdexcept>
@@ -47,7 +50,44 @@ inline constexpr size_t MITHRIL_AEAD_TAG_BYTES = 16u;
 inline constexpr size_t MITHRIL_HASH_BYTES = 32u;
 inline constexpr size_t MITHRIL_STREAM_HEADER_BYTES = 24u;
 
+namespace telemetry {
+
+struct Counters {
+    uint64_t total_operations;
+    uint64_t total_failures;
+    uint64_t verification_failures;
+    uint64_t internal_failures;
+};
+
+using FailureHook = void (*)(
+    const char *operation,
+    mithril_status status,
+    const char *status_string,
+    void *user_data);
+
+void set_failure_hook(FailureHook hook, void *user_data = nullptr) noexcept;
+void clear_failure_hook() noexcept;
+void reset() noexcept;
+Counters snapshot() noexcept;
+double failure_rate() noexcept;
+
+} // namespace telemetry
+
 namespace detail {
+
+struct TelemetryState {
+    std::atomic<uint64_t> total_operations{0u};
+    std::atomic<uint64_t> total_failures{0u};
+    std::atomic<uint64_t> verification_failures{0u};
+    std::atomic<uint64_t> internal_failures{0u};
+    std::atomic<telemetry::FailureHook> failure_hook{nullptr};
+    std::atomic<void *> failure_hook_user_data{nullptr};
+};
+
+inline TelemetryState &telemetry_state() noexcept {
+    static TelemetryState state;
+    return state;
+}
 
 inline void secure_memzero(void *ptr, size_t len) noexcept {
     volatile uint8_t *p = static_cast<volatile uint8_t *>(ptr);
@@ -64,6 +104,49 @@ inline bool ct_equal(const uint8_t *a, const uint8_t *b, size_t len) noexcept {
     return diff == 0u;
 }
 
+inline bool telemetry_stderr_enabled() noexcept {
+    const char *raw = std::getenv("MITHRIL_CRYPTO_TELEMETRY_STDERR");
+    if (raw == nullptr || raw[0] == '\0') {
+        return false;
+    }
+    return raw[0] == '1' || raw[0] == 'y' || raw[0] == 'Y' || raw[0] == 't' || raw[0] == 'T';
+}
+
+inline void record_status(const char *operation, mithril_status status) noexcept {
+    TelemetryState &state = telemetry_state();
+    state.total_operations.fetch_add(1u, std::memory_order_relaxed);
+
+    if (status == MITHRIL_OK) {
+        return;
+    }
+
+    state.total_failures.fetch_add(1u, std::memory_order_relaxed);
+
+    if (status == MITHRIL_ERR_AEAD_AUTH_FAILED || status == MITHRIL_ERR_SIGNATURE_INVALID) {
+        state.verification_failures.fetch_add(1u, std::memory_order_relaxed);
+    } else {
+        state.internal_failures.fetch_add(1u, std::memory_order_relaxed);
+    }
+
+    if (telemetry_stderr_enabled()) {
+        std::fprintf(
+            stderr,
+            "[mithril-telemetry] op=%s status=%s\n",
+            operation,
+            mithril_status_string(status));
+    }
+
+    const telemetry::FailureHook hook = state.failure_hook.load(std::memory_order_acquire);
+    if (hook != nullptr) {
+        void *user_data = state.failure_hook_user_data.load(std::memory_order_acquire);
+        try {
+            hook(operation, status, mithril_status_string(status), user_data);
+        } catch (...) {
+            // Telemetry hooks must never interfere with crypto flow.
+        }
+    }
+}
+
 [[noreturn]] inline void throw_status(const char *operation, mithril_status status) {
     std::string msg = operation;
     msg += " failed: ";
@@ -72,6 +155,7 @@ inline bool ct_equal(const uint8_t *a, const uint8_t *b, size_t len) noexcept {
 }
 
 inline void require_ok(const char *operation, mithril_status status) {
+    record_status(operation, status);
     if (status != MITHRIL_OK) {
         throw_status(operation, status);
     }
@@ -136,6 +220,46 @@ inline uint8_t hex_nibble(char c) {
 }
 
 } // namespace detail
+
+namespace telemetry {
+
+inline void set_failure_hook(FailureHook hook, void *user_data) noexcept {
+    detail::TelemetryState &state = detail::telemetry_state();
+    state.failure_hook_user_data.store(user_data, std::memory_order_release);
+    state.failure_hook.store(hook, std::memory_order_release);
+}
+
+inline void clear_failure_hook() noexcept {
+    set_failure_hook(nullptr, nullptr);
+}
+
+inline void reset() noexcept {
+    detail::TelemetryState &state = detail::telemetry_state();
+    state.total_operations.store(0u, std::memory_order_relaxed);
+    state.total_failures.store(0u, std::memory_order_relaxed);
+    state.verification_failures.store(0u, std::memory_order_relaxed);
+    state.internal_failures.store(0u, std::memory_order_relaxed);
+}
+
+inline Counters snapshot() noexcept {
+    const detail::TelemetryState &state = detail::telemetry_state();
+    return Counters{
+        .total_operations = state.total_operations.load(std::memory_order_relaxed),
+        .total_failures = state.total_failures.load(std::memory_order_relaxed),
+        .verification_failures = state.verification_failures.load(std::memory_order_relaxed),
+        .internal_failures = state.internal_failures.load(std::memory_order_relaxed),
+    };
+}
+
+inline double failure_rate() noexcept {
+    const Counters counters = snapshot();
+    if (counters.total_operations == 0u) {
+        return 0.0;
+    }
+    return static_cast<double>(counters.total_failures) / static_cast<double>(counters.total_operations);
+}
+
+} // namespace telemetry
 
 // ============================================================================
 // Forward Declarations
@@ -652,6 +776,7 @@ public:
             signature.data(),
             signature.size());
 
+        detail::record_status("mithril_sign_verify_detached", st);
         return st == MITHRIL_OK;
     }
 

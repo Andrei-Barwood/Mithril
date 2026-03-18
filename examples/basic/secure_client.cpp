@@ -25,6 +25,20 @@ using mithril::sodium::AuthenticatedEncryption;
 using mithril::sodium::KeyExchange;
 using mithril::sodium::PublicKey;
 
+namespace {
+
+void print_crypto_telemetry() {
+    const mithril::sodium::telemetry::Counters counters = mithril::sodium::telemetry::snapshot();
+    const double rate = mithril::sodium::telemetry::failure_rate() * 100.0;
+    std::cout << "[client] telemetry: ops=" << counters.total_operations
+              << " failures=" << counters.total_failures
+              << " verification_failures=" << counters.verification_failures
+              << " internal_failures=" << counters.internal_failures
+              << " failure_rate=" << rate << "%\n";
+}
+
+} // namespace
+
 class SecureClient {
 public:
     explicit SecureClient(asio::io_context &io_ctx)
@@ -34,6 +48,8 @@ public:
         mithril::network::compat::enforce_supported_crypto_path();
         std::cout << "[client] transport backend: "
                   << mithril::network::compat::backend_name() << "\n";
+        std::cout << "[client] rollout: "
+                  << mithril::network::compat::rollout_summary() << "\n";
         std::cout << "[client] crypto path: "
                   << mithril::network::compat::active_crypto_path() << "\n";
         std::cout << "[client] resolving " << host << ":" << port << "\n";
@@ -157,9 +173,11 @@ int main(int argc, char *argv[]) {
             });
 
         io_ctx.run();
+        print_crypto_telemetry();
         return failed ? 1 : 0;
     } catch (const std::exception &e) {
         std::cerr << "[client] startup error: " << e.what() << "\n";
+        print_crypto_telemetry();
         return 1;
     }
 }
