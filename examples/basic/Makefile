@@ -5,7 +5,7 @@
 # without requiring a system Boost installation.
 # ============================================================================
 
-CXX := clang++
+CXX ?= c++
 
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../..)
 MITHRIL_V2_DIR := $(ROOT_DIR)/Mithril_API_V2

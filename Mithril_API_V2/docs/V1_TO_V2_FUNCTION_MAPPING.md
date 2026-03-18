@@ -132,6 +132,49 @@ int native_entry(void) {
    - remover dependencias del adapter
    - dejar solo API `v2`
 
+## Sprint 7 status (migracion de consumidores)
+
+Estado: implementado en rama `codex/mithril-v2-sprints` con commits:
+
+1. `refactor(consumers): migrate core crypto calls to v2`
+2. `refactor(consumers): migrate network security calls`
+3. `chore(flags): default to v2 path`
+
+Soporte adicional aplicado para cierre operativo:
+
+1. build local autocontenible de ejemplos (`Makefile`)
+2. compat layer in-repo para `boost::asio` sobre standalone Asio
+3. gate CI para smoke de consumidores migrados
+
+Documentos de referencia Sprint 7:
+
+1. `docs/SPRINT7_CONSUMER_SCOPE.md`
+2. `docs/SPRINT7_VALIDATION.md`
+
+## Operacion de flags para consumidores
+
+Default actual:
+
+1. path `v2` activo por defecto
+2. path `v1` bloqueado por defecto
+
+Controles disponibles:
+
+1. runtime:
+   - variable `MITHRIL_CRYPTO_PATH`
+   - valores permitidos: `v2`, `v1`, `legacy`
+2. build (CMake):
+   - `-DMITHRIL_CONSUMER_PATH_V2_DEFAULT=ON|OFF`
+   - `-DMITHRIL_ENABLE_V1_COMPAT_PATH=ON|OFF`
+
+Ejemplo esperado de bloqueo cuando v1 esta deshabilitado:
+
+```zsh
+MITHRIL_CRYPTO_PATH=v1 ./secure_client localhost 3333
+```
+
+El proceso debe fallar con mensaje explicito indicando que v1/legacy esta deshabilitado.
+
 ## Cobertura de pruebas asociada
 
 - `tests/integration/test_v1_compat_smoke.c`
