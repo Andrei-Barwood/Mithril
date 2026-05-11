@@ -1,0 +1,44 @@
+name: github-actions-keepalive
+
+on:
+  schedule:
+    # Keep this below GitHub's 60-day inactivity window for scheduled workflows.
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Create a heartbeat commit even if the repository was updated recently."
+        required: false
+        type: boolean
+        default: false
+      min_days:
+        description: "Minimum days since the last commit before creating a heartbeat."
+        required: false
+        default: "45"
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: github-actions-keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Refresh scheduled workflow availability
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KEEPALIVE_BRANCH: ${{ github.event.repository.default_branch }}
+          KEEPALIVE_FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || false }}
+          KEEPALIVE_MIN_DAYS: ${{ github.event_name == 'workflow_dispatch' && inputs.min_days || '45' }}
+          KEEPALIVE_WORKFLOWS: mithril-v2-conformance-nightly.yml
+        run: scripts/maintenance/keep_github_actions_alive.sh
