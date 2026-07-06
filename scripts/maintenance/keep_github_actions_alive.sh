@@ -125,7 +125,21 @@ JSON
       echo "Could not determine branch to push heartbeat commit." >&2
       exit 65
     fi
-    git push origin "HEAD:${branch}"
+
+    # Authenticate the remote explicitly using the token. This is more reliable than
+    # relying solely on actions/checkout credentials, especially with branch protection
+    # rules or when a PAT is provided for bypassing PR requirements.
+    if [[ -n "${GITHUB_TOKEN:-}" && -n "${GITHUB_REPOSITORY:-}" ]]; then
+      git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+    fi
+
+    if ! git push origin "HEAD:${branch}"; then
+      echo "::error::Failed to push heartbeat commit to ${branch}."
+      echo "Common cause: branch protection rules (e.g. 'Require a pull request before merging')."
+      echo "Fix: create a fine-grained PAT with Contents: Read and write, store as ACTIONS_KEEPALIVE_PAT secret."
+      echo "Or, in branch protection settings, allow the workflow / github-actions to bypass PR requirements."
+      exit 1
+    fi
   else
     echo "Heartbeat commit created locally. Push it when you are ready."
   fi
