@@ -1,0 +1,7 @@
+{
+  "updated_at": "2026-07-06T11:14:18Z",
+  "reason": "Keep scheduled GitHub Actions active before GitHub's 60-day inactivity window.",
+  "min_days_without_commit": 45,
+  "previous_head": "177037189537355099da62aeb3a34747571747c7",
+  "workflow_files": ["mithril-v2-conformance-nightly.yml"]
+}
