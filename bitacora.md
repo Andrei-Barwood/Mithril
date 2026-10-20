@@ -456,6 +456,9 @@ flowchart LR
 | **Sesión 4** | [`f497efe`](https://github.com/Andrei-Barwood/Mithril/commit/f497efe) | Suite integral de 14 pruebas en `tests/` (unitarias, integración, seguridad y benchmarks), pasando 24/24 pruebas CTest al 100%. |
 | **Sesión 5** | [`4710790`](https://github.com/Andrei-Barwood/Mithril/commit/4710790) | Protocolos de telemetría de turbinas mareomotrices e IoT, y suite completa de 14 ejemplos ejecutables. |
 | **Sesión 6** | [`b1645f5`](https://github.com/Andrei-Barwood/Mithril/commit/b1645f5) | Hardening de CI/CD, normalización de directorios (`hardware/`, `tools/archive/`, `scripts/dev/`) y documentación técnica integral en `docs/`. |
+| **CI Fix 1** | [`2f6aac3`](https://github.com/Andrei-Barwood/Mithril/commit/2f6aac3) | Corrección de CI en macOS (evitar compilación de `z3`/`ccache` desde fuente) y cache de `MITHRIL_ASIO_INCLUDE_DIR` en Ubuntu. |
+| **CI Fix 2** | [`83d436a`](https://github.com/Andrei-Barwood/Mithril/commit/83d436a) | Soporte `reuse_address` en `SecureAcceptor`, shutdown explícito en `SecureSession` y timeout de 30s en CTest. |
+| **CI Fix 3** | [`2277d6e`](https://github.com/Andrei-Barwood/Mithril/commit/2277d6e) | Puerto efímero dinámico (puerto 0), reintentos con backoff en clientes y temporizador watchdog para estabilidad 100% en Linux. |
 
 ### 6.2. Estado Actual del Workspace
 * **Rama:** `main` sincronizada con `origin/main`.

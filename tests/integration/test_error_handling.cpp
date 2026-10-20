@@ -28,13 +28,12 @@ int main() {
 
     try {
         ::asio::io_context io_ctx;
-        const uint16_t test_port = 19453;
-
         auto message_handler = [](const std::vector<uint8_t> &data) -> ::asio::awaitable<std::vector<uint8_t>> {
             co_return data;
         };
 
-        auto acceptor = std::make_shared<SecureAcceptor>(io_ctx, test_port);
+        auto acceptor = std::make_shared<SecureAcceptor>(io_ctx, 0);
+        const uint16_t test_port = acceptor->port();
 
         ::asio::co_spawn(
             io_ctx,

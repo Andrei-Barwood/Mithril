@@ -23,9 +23,6 @@ int main() {
     try {
         ::asio::io_context io_ctx;
 
-        // Choose a dedicated high port for integration test
-        const uint16_t test_port = 19451;
-
         std::vector<std::string> server_received;
         std::vector<std::string> client_received;
 
@@ -37,7 +34,8 @@ int main() {
             co_return std::vector<uint8_t>(reply.begin(), reply.end());
         };
 
-        auto acceptor = std::make_shared<SecureAcceptor>(io_ctx, test_port);
+        auto acceptor = std::make_shared<SecureAcceptor>(io_ctx, 0);
+        const uint16_t test_port = acceptor->port();
 
         // Run server in background coroutine
         ::asio::co_spawn(
