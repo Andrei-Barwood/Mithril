@@ -7,7 +7,7 @@ Fecha de referencia: 2026-03-18
 1. Build y smoke local de consumidores objetivo:
 
 ```zsh
-make -C /Users/kirtantegsingh/documents/mithril/examples/basic test
+make -C examples/basic test
 ```
 
 Resultado esperado: `[test] OK`
@@ -15,7 +15,7 @@ Resultado esperado: `[test] OK`
 2. Verificacion de flags (v1 bloqueado por defecto):
 
 ```zsh
-cd /Users/kirtantegsingh/documents/mithril/examples/basic
+cd examples/basic
 MITHRIL_CRYPTO_PATH=v1 ./secure_client localhost 3333
 ```
 
@@ -28,8 +28,8 @@ Resultado esperado:
 
 ```zsh
 grep -nE '#include[[:space:]]*<sodium\.h>' \
-  /Users/kirtantegsingh/documents/mithril/examples/basic/secure_client.cpp \
-  /Users/kirtantegsingh/documents/mithril/examples/basic/accepting_connection_sodium.cpp
+  examples/basic/secure_client.cpp \
+  examples/basic/accepting_connection_sodium.cpp
 ```
 
 Resultado esperado: sin coincidencias.

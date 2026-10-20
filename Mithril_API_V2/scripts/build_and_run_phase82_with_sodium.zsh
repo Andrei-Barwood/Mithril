@@ -1,7 +1,8 @@
 #!/bin/zsh
 set -euo pipefail
 
-ROOT="/Users/kirtantegsingh/documents/mithril/Mithril_API_V2"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 INC=("-I${ROOT}/include")
 CFLAGS=("-std=c23" "-DMITHRIL_USE_LIBSODIUM")
 APPLE_LIBS=("-framework" "Security")

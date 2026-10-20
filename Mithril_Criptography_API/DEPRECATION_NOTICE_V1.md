@@ -19,8 +19,8 @@ The primary line is now `Mithril_API_V2` (`v2.0.0`).
 
 Migration resources:
 
-1. `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
-2. `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
+1. `../Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+2. `../Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
 
 ## Maintenance Window
 

@@ -140,7 +140,7 @@ int main(void) {
 ### 6.2 Build y test en modo FLINT
 
 ```zsh
-/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/ci/run_phase10_ci.zsh
+./Mithril_API_V2/ci/run_phase10_ci.zsh
 ```
 
 Este script configura con:

@@ -37,22 +37,22 @@ Version markers:
 ## Migration Steps
 
 1. Integrate headers from:
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/include/mithril/`
+   - `Mithril_API_V2/include/mithril/`
 2. Replace legacy init and provider assumptions with:
    - `mithril_init`
    - `mithril_provider_activate`
 3. Replace legacy calls using:
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
+   - `Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
 4. Validate with CI-equivalent local checks:
    - `cmake --build ...`
    - `ctest --output-on-failure`
-   - `make -C /Users/kirtantegsingh/documents/mithril/examples/basic test`
+   - `make -C examples/basic test`
 
 ## Ops Guidance for Progressive Rollout
 
 Use Sprint 8 runbook:
 
-1. `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/ROLLOUT_ROLLBACK_RUNBOOK.md`
+1. `Mithril_API_V2/docs/ROLLOUT_ROLLBACK_RUNBOOK.md`
 
 This defines canary and rollback toggles plus telemetry counters for runtime observation.
 

@@ -29,5 +29,5 @@ All notable changes to Mithril are documented in this file.
 
 1. Use `Mithril_API_V2` as the primary integration target.
 2. Start migration from legacy calls using:
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+   - `Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
+   - `Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`

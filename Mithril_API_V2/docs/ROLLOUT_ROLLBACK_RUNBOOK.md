@@ -98,13 +98,13 @@ Rollback is fail-closed from runtime policy plus traffic shift to prior stable d
 Run local ops tests:
 
 ```zsh
-make -C /Users/kirtantegsingh/documents/mithril/examples/basic test-sprint8
+make -C examples/basic test-sprint8
 ```
 
 Force rollback block:
 
 ```zsh
-cd /Users/kirtantegsingh/documents/mithril/examples/basic
+cd examples/basic
 MITHRIL_V2_ROLLOUT_MODE=rollback ./secure_client localhost 3333
 ```
 
@@ -113,7 +113,7 @@ Expected: startup failure with rollout policy message.
 Force canary exclusion:
 
 ```zsh
-cd /Users/kirtantegsingh/documents/mithril/examples/basic
+cd examples/basic
 MITHRIL_V2_ROLLOUT_MODE=canary \
 MITHRIL_V2_CANARY_PERCENT=0 \
 MITHRIL_V2_CANARY_KEY=node-a \

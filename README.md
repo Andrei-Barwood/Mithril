@@ -5,8 +5,8 @@
 1. Primary stable line: `Mithril_API_V2` (`v2.0.0`).
 2. Legacy line: `Mithril_Criptography_API` (v1) is deprecated and in limited maintenance mode.
 3. Migration references:
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
-   - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
+   - `Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
+   - `Mithril_API_V2/docs/V1_TO_V2_FUNCTION_MAPPING.md`
 
 ## Overview
 

@@ -52,8 +52,8 @@ Implemented status (phases 1 → 10):
 
 Formal release and migration notes:
 
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
-- `/Users/kirtantegsingh/documents/mithril/CHANGELOG.md`
+- `docs/V2_0_MIGRATION_NOTES.md`
+- `../CHANGELOG.md`
 
 ---
 
@@ -111,7 +111,7 @@ cc --version
 ### Step 1: Go to project root
 
 ```zsh
-cd /Users/kirtantegsingh/documents/mithril/Mithril_API_V2
+cd Mithril_API_V2
 ```
 
 ### Step 2: Configure
@@ -148,7 +148,7 @@ Expected output:
 For a one-shot run:
 
 ```zsh
-/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/scripts/build_and_run_phase82_with_sodium.zsh
+./scripts/build_and_run_phase82_with_sodium.zsh
 ```
 
 This script will:
@@ -164,11 +164,11 @@ This script will:
 
 Available configs:
 
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Base.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Debug.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Release.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Warnings.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Sanitizers.xcconfig`
+- `xcode/xcconfig/Base.xcconfig`
+- `xcode/xcconfig/Debug.xcconfig`
+- `xcode/xcconfig/Release.xcconfig`
+- `xcode/xcconfig/Warnings.xcconfig`
+- `xcode/xcconfig/Sanitizers.xcconfig`
 
 ### Step-by-step
 

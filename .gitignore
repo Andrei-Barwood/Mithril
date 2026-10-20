@@ -1,25 +1,77 @@
-# Build artifacts
+# ============================================================================
+# Mithril .gitignore
+# ============================================================================
+
+# Build directories & CMake
 build/
-examples/build-cmake-v2/
+build-*/
+examples/build-*/
 network/third_party/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+
+# Compiled binaries and objects
 *.o
+*.obj
 *.a
 *.so
 *.dylib
+*.framework/
 *.framework
+*.dSYM/
 
-# IDE
+# Example executables
+examples/basic/accepting_connection_sodium
+examples/basic/secure_client
+examples/basic/test_rollout_toggles
+examples/basic/test_crypto_telemetry
+examples/basic/async_server_sodium
+examples/basic/connecting_client_sodium
+examples/basic/echo_server_sodium
+examples/basic/binding_socket_sodium
+
+# Apple / Xcode artifacts
+.DS_Store
+._*
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.xcuserdatad/
+*.xcuserstate
+*.xcbkptlist
+*.xcarchive
+*.xcarchive/
+DerivedData/
+
+# IDE & Editors
 .vscode/
 .idea/
-*.xcworkspace
-xcuserdata/
+*.swp
+*~
 
-# Generated
+# Generated and logs
 *.log
 *.tmp
+server_test.log
+client_test.log
+
+# Binary archives & reports
+*.epub
+docs/archive/
+
+# Hardware / EDA Simulation Artifacts (Icarus Verilog, GTKWave)
+*.vvp
+*.vcd
+*.vpi
+sim_build/
+simv*
+csrc/
+*.daidir/
+
+# Certificates (keys must never be committed)
 certs/*.key
 certs/*.crt
 !certs/dev/.gitkeep
-
-# macOS
-.DS_Store
+!certs/prod/.gitkeep

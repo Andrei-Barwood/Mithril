@@ -53,8 +53,8 @@ Estado implementado (fases 1 → 10):
 
 Notas formales de release y migración:
 
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/docs/V2_0_MIGRATION_NOTES.md`
-- `/Users/kirtantegsingh/documents/mithril/CHANGELOG.md`
+- `docs/V2_0_MIGRATION_NOTES.md`
+- `../CHANGELOG.md`
 
 ---
 
@@ -112,7 +112,7 @@ cc --version
 ### Paso 1: ir a la carpeta del proyecto
 
 ```zsh
-cd /Users/kirtantegsingh/documents/mithril/Mithril_API_V2
+cd Mithril_API_V2
 ```
 
 ### Paso 2: configurar
@@ -149,7 +149,7 @@ Salida esperada:
 Si quieres una ejecución rápida todo-en-uno:
 
 ```zsh
-/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/scripts/build_and_run_phase82_with_sodium.zsh
+./scripts/build_and_run_phase82_with_sodium.zsh
 ```
 
 Este script:
@@ -165,11 +165,11 @@ Este script:
 
 Configuraciones disponibles en:
 
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Base.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Debug.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Release.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Warnings.xcconfig`
-- `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/xcode/xcconfig/Sanitizers.xcconfig`
+- `xcode/xcconfig/Base.xcconfig`
+- `xcode/xcconfig/Debug.xcconfig`
+- `xcode/xcconfig/Release.xcconfig`
+- `xcode/xcconfig/Warnings.xcconfig`
+- `xcode/xcconfig/Sanitizers.xcconfig`
 
 ### Paso a paso
 

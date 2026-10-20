@@ -11,7 +11,7 @@ Definir el alcance exacto de compatibilidad `v1 -> v2` antes de codificar wrappe
   - `mithril_modarith_add_mod/mul_mod`
   - `mithril_rng/hash/aead/kex/sign` (no aplican al adapter v1 numerico inicial)
 - La superficie `v1` utilizable esta en:
-  - `/Users/kirtantegsingh/documents/mithril/Mithril_Criptography_API/Mithril_Framework/*.h`
+  - `Mithril_Criptography_API/Mithril_Framework/*.h`
 - La superficie `v1` mezcla:
   - APIs libsodium con arreglos de 32 bytes y convencion little-endian.
   - APIs FLINT (`fmpz_t`) con semantica de enteros arbitrarios.
@@ -78,11 +78,11 @@ Razon: tooling de plantillas/codigo, no parte del adapter criptografico en ejecu
 ### 1) Ubicacion del adapter
 
 - Header publico compat:
-  - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/include/mithril/compat/mithril_v1_compat.h`
+  - `Mithril_API_V2/include/mithril/compat/mithril_v1_compat.h`
 - Fuente:
-  - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/src/compat/mithril_v1_compat.c`
+  - `Mithril_API_V2/src/compat/mithril_v1_compat.c`
 - Helpers internos:
-  - `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/src/compat/mithril_v1_compat_internal.h`
+  - `Mithril_API_V2/src/compat/mithril_v1_compat_internal.h`
 
 ### 2) Gestion de contexto
 

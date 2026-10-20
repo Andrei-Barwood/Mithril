@@ -1,7 +1,7 @@
 # Error Contract Matrix (Sprint 4)
 
 This matrix documents the expected `mithril_status` for core error scenarios.
-It is enforced by `/Users/kirtantegsingh/documents/mithril/Mithril_API_V2/tests/integration/test_error_contracts.c`.
+It is enforced by `Mithril_API_V2/tests/integration/test_error_contracts.c`.
 
 | Scenario | Expected status |
 |---|---|
