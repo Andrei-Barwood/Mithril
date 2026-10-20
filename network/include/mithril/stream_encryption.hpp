@@ -41,6 +41,7 @@ public:
     explicit StreamEncryption(const SymmetricKey &key);
 
     const StreamHeader &get_header() const noexcept { return header_; }
+    const SymmetricKey &get_key() const noexcept { return key_; }
 
     std::vector<uint8_t> encrypt_chunk(
         std::span<const uint8_t> chunk,

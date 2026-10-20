@@ -30,6 +30,9 @@ std::vector<uint8_t> AuthenticatedEncryption::encrypt(std::span<const uint8_t> p
     detail::require_ok("mithril_rng_fill", mithril_rng_fill(detail::context(), nonce.data(), nonce.size()));
 
     std::vector<uint8_t> cipher(plaintext.size() + MITHRIL_AEAD_TAG_BYTES);
+    static const uint8_t kEmptyDummy = 0u;
+    const uint8_t *pt_ptr = plaintext.data() ? plaintext.data() : &kEmptyDummy;
+
     detail::require_ok(
         "mithril_aead_encrypt",
         mithril_aead_encrypt(
@@ -41,7 +44,7 @@ std::vector<uint8_t> AuthenticatedEncryption::encrypt(std::span<const uint8_t> p
             nonce.size(),
             nullptr,
             0u,
-            plaintext.data(),
+            pt_ptr,
             plaintext.size(),
             cipher.data(),
             cipher.size(),
@@ -67,6 +70,8 @@ std::vector<uint8_t> AuthenticatedEncryption::decrypt(std::span<const uint8_t> c
     std::span<const uint8_t> cipher_data = ciphertext.subspan(nonce.size());
     std::vector<uint8_t> plaintext(cipher_data.size());
     size_t written_len = 0u;
+    static uint8_t kEmptyOutDummy = 0u;
+    uint8_t *pt_ptr = plaintext.data() ? plaintext.data() : &kEmptyOutDummy;
 
     detail::require_ok(
         "mithril_aead_decrypt",
@@ -81,7 +86,7 @@ std::vector<uint8_t> AuthenticatedEncryption::decrypt(std::span<const uint8_t> c
             0u,
             cipher_data.data(),
             cipher_data.size(),
-            plaintext.data(),
+            pt_ptr,
             plaintext.size(),
             &written_len));
 
@@ -114,6 +119,9 @@ std::vector<uint8_t> StreamEncryption::encrypt_chunk(
 
     std::vector<uint8_t> cipher(chunk.size() + MITHRIL_AEAD_TAG_BYTES);
     size_t written_len = 0u;
+    static const uint8_t kEmptyDummy = 0u;
+    const uint8_t *chunk_ptr = chunk.data() ? chunk.data() : &kEmptyDummy;
+
     detail::require_ok(
         "mithril_aead_encrypt",
         mithril_aead_encrypt(
@@ -125,7 +133,7 @@ std::vector<uint8_t> StreamEncryption::encrypt_chunk(
             nonce.size(),
             &flag,
             1u,
-            chunk.data(),
+            chunk_ptr,
             chunk.size(),
             cipher.data(),
             cipher.size(),
@@ -162,6 +170,9 @@ std::pair<std::vector<uint8_t>, bool> StreamEncryption::decrypt_chunk(
 
     std::vector<uint8_t> plaintext(cipher.size());
     size_t written_len = 0u;
+    static uint8_t kEmptyOutDummy = 0u;
+    uint8_t *pt_ptr = plaintext.data() ? plaintext.data() : &kEmptyOutDummy;
+
     detail::require_ok(
         "mithril_aead_decrypt",
         mithril_aead_decrypt(
@@ -175,7 +186,7 @@ std::pair<std::vector<uint8_t>, bool> StreamEncryption::decrypt_chunk(
             1u,
             cipher.data(),
             cipher.size(),
-            plaintext.data(),
+            pt_ptr,
             plaintext.size(),
             &written_len));
 

@@ -14,12 +14,15 @@ Hash256 CryptoHash::hash(std::span<const uint8_t> data) {
 
     Hash256 out{};
     size_t written_len = 0u;
+    static const uint8_t kEmptyDummy = 0u;
+    const uint8_t *in_ptr = data.data() ? data.data() : &kEmptyDummy;
+
     detail::require_ok(
         "mithril_hash_compute",
         mithril_hash_compute(
             detail::context(),
             MITHRIL_HASH_ALG_BLAKE2B_256,
-            data.data(),
+            in_ptr,
             data.size(),
             out.data(),
             out.size(),

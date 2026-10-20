@@ -397,10 +397,25 @@ flowchart LR
 - [x] Verificar compatibilidad completa de compilación con Asio standalone y C++20 (11/11 pruebas en verde, cero warnings).
 
 ### 📍 Sesión 4: Implementación de la Suite de Pruebas en [`tests/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests)
-- [ ] Escribir el [`tests/CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/CMakeLists.txt) integrando Catch2 o el framework de pruebas preferido.
-- [ ] Implementar las pruebas unitarias vacías (`test_encryption.cpp`, `test_hash.cpp`, `test_key_exchange.cpp`, `test_signatures.cpp`).
-- [ ] Implementar pruebas de seguridad contra ataques de repetición (`test_replay_attack.cpp`) y protección MitM (`test_mitm_protection.cpp`).
-- [ ] Implementar benchmarks de latencia y throughput (`benchmark_latency.cpp`, `benchmark_throughput.cpp`).
+- [x] Escribir el [`tests/CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/CMakeLists.txt) y [`tests/test_helper.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/test_helper.hpp) estructurando las 14 pruebas de la raíz e integrándolas en CTest (elevando la suite total a 24/24 pruebas automatizadas).
+- [x] Implementar la totalidad de pruebas unitarias en `tests/unit/`:
+  - [`test_encryption.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_encryption.cpp): Cifrado AEAD multitamano, no-repetición de nonces, detección de manipulación y `StreamEncryption` secuencial.
+  - [`test_hash.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_hash.cpp): BLAKE2b-256, efecto avalancha (>25% bits volteados), hash con clave y `MultiPartHash`.
+  - [`test_key_exchange.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_key_exchange.cpp): Derivación ECDH X25519 bilateral, aislamiento de terceros y cifrado asimétrico directo.
+  - [`test_signatures.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_signatures.cpp): Firmas Ed25519, rechazo de firmas manipuladas, claves espurias y firmado/cifrado combinado.
+  - [`test_mithril_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_mithril_sodium.cpp): Suite de humo de la capa de compatibilidad C++20.
+- [x] Implementar pruebas de integración asíncronas en `tests/integration/`:
+  - [`test_full_handshake.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/integration/test_full_handshake.cpp): Handshake cliente-servidor Asio loopback completo y mensajería encriptada.
+  - [`test_concurrent_sessions.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/integration/test_concurrent_sessions.cpp): Múltiples sesiones asíncronas paralelas concurrentes en `SecureAcceptor`.
+  - [`test_error_handling.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/integration/test_error_handling.cpp): Resiliencia ante desconexiones intempestivas, claves truncadas y longitudes sobredimensionadas (>16MB).
+- [x] Implementar pruebas de seguridad en `tests/security/`:
+  - [`test_replay_attack.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/security/test_replay_attack.cpp): Inmunidad anti-replay entre sesiones mediante secreto efímero y rechazo de duplicados en streaming.
+  - [`test_mitm_protection.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/security/test_mitm_protection.cpp): Detección de sustitución de clave pública y autenticación de claves efímeras mediante identidad Ed25519.
+  - [`fuzz_protocol.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/security/fuzz_protocol.cpp): Fuzzing mutacional con 1,000+ iteraciones sobre descifrado, verificación y límites de búfer.
+- [x] Implementar benchmarks de rendimiento en `tests/performance/`:
+  - [`benchmark_latency.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/performance/benchmark_latency.cpp): Latencia promedio en microsegundos de ECDH, firma, verificación, hash y AEAD.
+  - [`benchmark_throughput.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/performance/benchmark_throughput.cpp): Rendimiento de flujo continuo masivo (>50 MB/s).
+  - [`benchmark_encryption.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/performance/benchmark_encryption.cpp): Escalabilidad de rendimiento AEAD para bloques desde 64 B hasta 1 MB.
 
 ### 📍 Sesión 5: Implementación de Protocolos y Ejemplos de Energía Mareomotriz
 - [ ] Implementar [`network/protocols/tidal_sensor_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/tidal_sensor_protocol.hpp) con serialización binaria compacta, HMAC/AEAD y anti-replay.

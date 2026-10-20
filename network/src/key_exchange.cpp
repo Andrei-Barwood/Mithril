@@ -58,6 +58,9 @@ std::vector<uint8_t> KeyExchange::encrypt_to(
     detail::require_ok("mithril_rng_fill", mithril_rng_fill(detail::context(), nonce.data(), nonce.size()));
 
     std::vector<uint8_t> cipher(plaintext.size() + MITHRIL_AEAD_TAG_BYTES);
+    static const uint8_t kEmptyDummy = 0u;
+    const uint8_t *pt_ptr = plaintext.data() ? plaintext.data() : &kEmptyDummy;
+
     detail::require_ok(
         "mithril_aead_encrypt",
         mithril_aead_encrypt(
@@ -69,7 +72,7 @@ std::vector<uint8_t> KeyExchange::encrypt_to(
             nonce.size(),
             nullptr,
             0u,
-            plaintext.data(),
+            pt_ptr,
             plaintext.size(),
             cipher.data(),
             cipher.size(),
@@ -100,6 +103,8 @@ std::vector<uint8_t> KeyExchange::decrypt_from(
     std::span<const uint8_t> cipher_data = ciphertext.subspan(nonce.size());
     std::vector<uint8_t> plaintext(cipher_data.size());
     size_t written_len = 0u;
+    static uint8_t kEmptyOutDummy = 0u;
+    uint8_t *pt_ptr = plaintext.data() ? plaintext.data() : &kEmptyOutDummy;
 
     detail::require_ok(
         "mithril_aead_decrypt",
@@ -114,7 +119,7 @@ std::vector<uint8_t> KeyExchange::decrypt_from(
             0u,
             cipher_data.data(),
             cipher_data.size(),
-            plaintext.data(),
+            pt_ptr,
             plaintext.size(),
             &written_len));
 
