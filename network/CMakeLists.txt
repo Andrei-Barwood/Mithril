@@ -75,6 +75,7 @@ target_include_directories(mithril_network
         $<BUILD_INTERFACE:${MITHRIL_ASIO_INCLUDE_DIR}>
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:include>
 )
 

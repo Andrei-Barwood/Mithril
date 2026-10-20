@@ -2,7 +2,7 @@
 
 **Fecha de Auditoría:** 20 de Octubre de 2026  
 **Versión del Proyecto:** 2.0.0 (API V2) / 2.1.0 (Target Global)  
-**Estado General:** Sesiones 1 a 4 completadas con éxito. Árbol de Git saneado, sistema CMake raíz unificado, capa de red C++20 modularizada sin esqueletos vacíos y suite exhaustiva de 24 pruebas automatizadas en CTest pasando al 100%. El repositorio se encuentra listo y estabilizado para abordar la **Sesión 5** (Protocolos y Ejemplos de Energía Mareomotriz/IoT).
+**Estado General:** Sesiones 1 a 5 completadas con éxito. Árbol de Git saneado, sistema CMake raíz unificado, capa de red C++20 modularizada, suite de 24 pruebas automatizadas en CTest pasando al 100%, protocolos específicos de mareomotriz e IoT implementados y los 14 ejecutables de ejemplos funcionando. El repositorio se encuentra listo para abordar la **Sesión 6** (Hardening de CI/CD, Documentación y Limpieza Final).
 
 ---
 
@@ -223,7 +223,7 @@ El repositorio contaba originalmente con **48 archivos vacíos** que simulaban e
 - `crypto/src/mithril_crypto.c`
 *Resolución:* Configurado como biblioteca estática transicional `libmithril_crypto.a` con cabeceras que redirigen limpiamente hacia `Mithril_API_V2` (providers c23 y flint). Cero archivos de 0 bytes.
 
-#### Grupo C: Capa [`network/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network) ✅ [RESUELTO EN SESIONES 2 Y 3]
+#### Grupo C: Capa [`network/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network) ✅ [RESUELTO EN SESIONES 2, 3 Y 5]
 - `network/CMakeLists.txt`
 - `network/include/mithril/common.hpp`
 - `network/include/mithril/crypto_hash.hpp`
@@ -232,13 +232,15 @@ El repositorio contaba originalmente con **48 archivos vacíos** que simulaban e
 - `network/include/mithril/secure_acceptor.hpp`
 - `network/include/mithril/secure_session.hpp`
 - `network/include/mithril/stream_encryption.hpp`
+- `network/protocols/tidal_sensor_protocol.hpp`
+- `network/protocols/iot_protocol.hpp`
 - `network/src/crypto_hash.cpp`
 - `network/src/digital_signature.cpp`
 - `network/src/key_exchange.cpp`
 - `network/src/secure_acceptor.cpp`
 - `network/src/secure_session.cpp`
 - `network/src/stream_encryption.cpp`
-*Resolución:* El mega-header monolítico fue desglosado en cabeceras modulares y todas las implementaciones fueron escritas en `network/src/`. Se compilan dentro de `libmithril_network.a`. Quedan pendientes para la Sesión 5 únicamente los protocolos de alto nivel (`protocols/tidal_sensor_protocol.hpp` y `protocols/iot_protocol.hpp`).
+*Resolución:* Todas las cabeceras modulares, implementaciones en C++20 y los protocolos específicos de telemetría marina e IoT están 100% implementados, compilados y operativos.
 
 #### Grupo D: Suite de Pruebas [`tests/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests) ✅ [RESUELTO EN SESIÓN 4]
 - `tests/CMakeLists.txt`
@@ -249,10 +251,13 @@ El repositorio contaba originalmente con **48 archivos vacíos** que simulaban e
 - `tests/performance/benchmark_encryption.cpp`, `benchmark_latency.cpp`, `benchmark_throughput.cpp`
 *Resolución:* Los 14 ejecutables de pruebas y benchmarks fueron implementados al 100%, integrados en CTest y validados con 24/24 pruebas pasando exitosamente. Cero archivos de 0 bytes.
 
-#### Grupo E: Directorio [`examples/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples) ⏳ [OBJETIVO SESIÓN 5]
+#### Grupo E: Directorio [`examples/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples) ✅ [RESUELTO EN SESIONES 2 Y 5]
+- `examples/CMakeLists.txt`
+- `examples/basic/accepting_connection_sodium.cpp`, `secure_client.cpp`, `binding_socket_sodium.cpp`, `test_rollout_toggles.cpp`, `test_crypto_telemetry.cpp`
 - `examples/basic/async_server_sodium.cpp`, `connecting_client_sodium.cpp`, `echo_server_sodium.cpp`
-- `examples/iot_devices/device_simulator.cpp`, `gateway_server.cpp`, `sensor_client.cpp`
-- `examples/tidal_energy/control_panel_client.cpp`, `data_aggregator.cpp`, `tidal_sensor_server.cpp`
+- `examples/iot_devices/CMakeLists.txt`, `device_simulator.cpp`, `gateway_server.cpp`, `sensor_client.cpp`
+- `examples/tidal_energy/CMakeLists.txt`, `control_panel_client.cpp`, `data_aggregator.cpp`, `tidal_sensor_server.cpp`
+*Resolución:* Todos los ejemplos (básicos, IoT y energía mareomotriz) están implementados, compilados e integrados en el CMake global (14 binarios de ejemplo funcionales). Cero archivos de 0 bytes.
 
 #### Grupo F: Documentación [`docs/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/docs) ⏳ [OBJETIVO SESIÓN 6]
 - `docs/API_REFERENCE.md`, `docs/ARCHITECTURE.md`, `docs/GETTING_STARTED.md`
@@ -420,12 +425,15 @@ flowchart LR
   - [`benchmark_encryption.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/performance/benchmark_encryption.cpp): Escalabilidad de rendimiento AEAD para bloques desde 64 B hasta 1 MB.
 
 ### 📍 Sesión 5: Implementación de Protocolos y Ejemplos de Energía Mareomotriz
-- [ ] Implementar [`network/protocols/tidal_sensor_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/tidal_sensor_protocol.hpp) con serialización binaria compacta, HMAC/AEAD y anti-replay.
-- [ ] Completar los ejemplos en [`examples/tidal_energy/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/):
-  - `tidal_sensor_server.cpp` (simulación de turbina marina transmitiendo métricas).
-  - `control_panel_client.cpp` (consola de mando autorizada recibiendo datos).
-  - `data_aggregator.cpp` (nodo concentrador de microred).
-- [ ] Completar los ejemplos en [`examples/iot_devices/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/) y los ejemplos básicos pendientes.
+- [x] Implementar [`network/protocols/tidal_sensor_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/tidal_sensor_protocol.hpp) con serialización binaria compacta, HMAC/AEAD y anti-replay.
+- [x] Completar los ejemplos en [`examples/tidal_energy/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/):
+  - [`tidal_sensor_server.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/tidal_sensor_server.cpp) (simulación de turbina marina transmitiendo métricas).
+  - [`control_panel_client.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/control_panel_client.cpp) (consola de mando autorizada recibiendo datos).
+  - [`data_aggregator.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/data_aggregator.cpp) (nodo concentrador de microred).
+- [x] Completar los ejemplos en [`examples/iot_devices/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/) y los ejemplos básicos pendientes en [`examples/basic/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/):
+  - [`examples/basic/async_server_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/async_server_sodium.cpp), [`connecting_client_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/connecting_client_sodium.cpp), [`echo_server_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/echo_server_sodium.cpp).
+  - [`examples/iot_devices/device_simulator.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/device_simulator.cpp), [`gateway_server.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/gateway_server.cpp), [`sensor_client.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/sensor_client.cpp).
+  - [`network/protocols/iot_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/iot_protocol.hpp).
 
 ### 📍 Sesión 6: Hardening de CI/CD, Documentación y Limpieza Final
 - [ ] Corregir `actions/checkout@v7` por `actions/checkout@v4` en [`.github/workflows/github-actions-keepalive.yml`](file:///Users/andreibarwood/Documents/snocomm/Mithril/.github/workflows/github-actions-keepalive.yml).
@@ -445,19 +453,20 @@ flowchart LR
 | **Sesión 2** | [`1d02c33`](https://github.com/Andrei-Barwood/Mithril/commit/1d02c33) | CMake raíz unificado, configuración de advertencias/sanitizadores, capa `crypto/` transicional y shims Asio/Boost. |
 | **Sesión 3** | [`9bc911d`](https://github.com/Andrei-Barwood/Mithril/commit/9bc911d) | Modularización de `network/include/mithril/`, eliminación del mega-header de 1,012 líneas e implementaciones completas en `network/src/`. |
 | **Sesión 4** | [`f497efe`](https://github.com/Andrei-Barwood/Mithril/commit/f497efe) | Suite integral de 14 pruebas en `tests/` (unitarias, integración, seguridad y benchmarks), pasando 24/24 pruebas CTest al 100%. |
+| **Sesión 5** | [`abcc278`](https://github.com/Andrei-Barwood/Mithril/commit/abcc278) | Protocolos de telemetría de turbinas mareomotrices e IoT, y suite completa de 14 ejemplos ejecutables. |
 
 ### 6.2. Estado Actual del Workspace
 * **Rama:** `main` sincronizada con `origin/main` (sin divergencias).
 * **Compilación:** `cmake -B build -S . && cmake --build build --parallel` compila limpiamente sin advertencias bajo `-Wall -Wextra`.
 * **Pruebas:** `./scripts/testing/run_all_tests.zsh` ejecuta y pasa las 24 pruebas de CTest y las validaciones de ejemplos.
-* **Archivos vacíos restantes en el repo:** 11 archivos correspondientes a los ejemplos (`examples/basic/`, `examples/iot_devices/`, `examples/tidal_energy/`), los 2 protocolos de red (`network/protocols/`), y la documentación en `docs/`.
+* **Archivos vacíos restantes en el repo:** 9 archivos correspondientes exclusivamente a la documentación en `docs/` (`docs/ARCHITECTURE.md`, `docs/GETTING_STARTED.md`, `docs/API_REFERENCE.md`, `docs/architecture/*.md`, `docs/tutorials/*.md`). Cero archivos de código vacíos en todo el repositorio.
 
-### 6.3. Instrucciones de Reanudación para la Sesión 5
+### 6.3. Instrucciones de Reanudación para la Sesión 6
 Para reanudar el trabajo en la próxima sesión:
 1. Validar estado limpio: `git status` y `./scripts/testing/run_all_tests.zsh`.
-2. Implementar [`network/protocols/tidal_sensor_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/tidal_sensor_protocol.hpp) (protocolo binario con framing AEAD, marcas de tiempo anti-replay y telemetría de turbinas).
-3. Implementar [`network/protocols/iot_protocol.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/protocols/iot_protocol.hpp).
-4. Completar los ejemplos en [`examples/tidal_energy/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/tidal_energy/) y [`examples/iot_devices/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/iot_devices/).
+2. Actualizar flujos de CI/CD en `.github/workflows/` (versiones válidas de GitHub Actions y trigger en rama `main`).
+3. Normalizar directorios (`ASIC implementation` -> `hardware/`, `tools/` histórico a `tools/archive/`).
+4. Redactar la documentación técnica integral en `docs/`.
 
 ---
 

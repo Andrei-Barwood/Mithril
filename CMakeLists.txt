@@ -23,6 +23,8 @@ list(APPEND CMAKE_MODULE_PATH
 include(CompilerWarnings)
 include(Sanitizers)
 
+find_package(Threads REQUIRED)
+
 # ----------------------------------------------------------------------------
 # Standards
 # ----------------------------------------------------------------------------
