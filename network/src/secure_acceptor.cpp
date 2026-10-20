@@ -11,8 +11,13 @@ namespace mithril::network {
 
 SecureAcceptor::SecureAcceptor(::asio::io_context &io_ctx, uint16_t port)
     : io_ctx_(io_ctx),
-      acceptor_(io_ctx, tcp::endpoint(tcp::v4(), port)),
-      port_(port) {}
+      acceptor_(io_ctx),
+      port_(port) {
+    tcp::endpoint ep(tcp::v4(), port);
+    acceptor_.open(ep.protocol());
+    acceptor_.set_option(tcp::acceptor::reuse_address(true));
+    acceptor_.bind(ep);
+}
 
 ::asio::awaitable<void> SecureAcceptor::run(SecureSession::MessageHandler handler) {
     constexpr int kBacklogSize = 30;
@@ -21,13 +26,20 @@ SecureAcceptor::SecureAcceptor(::asio::io_context &io_ctx, uint16_t port)
     compat::enforce_supported_crypto_path();
 
     while (!stopped_) {
-        tcp::socket socket = co_await acceptor_.async_accept(::asio::use_awaitable);
-        auto session = std::make_shared<SecureSession>(std::move(socket));
+        try {
+            tcp::socket socket = co_await acceptor_.async_accept(::asio::use_awaitable);
+            auto session = std::make_shared<SecureSession>(std::move(socket));
 
-        ::asio::co_spawn(
-            io_ctx_,
-            session->start(handler),
-            ::asio::detached);
+            ::asio::co_spawn(
+                io_ctx_,
+                session->start(handler),
+                ::asio::detached);
+            session.reset();
+        } catch (const ::asio::system_error &) {
+            if (stopped_) {
+                co_return;
+            }
+        }
     }
 }
 

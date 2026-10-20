@@ -29,6 +29,7 @@ function(mithril_add_test_target target_name source_file is_benchmark)
     # Register with CTest
     if(NOT is_benchmark)
         add_test(NAME ${target_name} COMMAND ${target_name})
+        set_tests_properties(${target_name} PROPERTIES TIMEOUT 30)
     else()
         add_test(NAME ${target_name} COMMAND ${target_name})
         set_tests_properties(${target_name} PROPERTIES LABELS "benchmark" TIMEOUT 60)

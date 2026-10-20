@@ -125,6 +125,10 @@ SecureSession::SecureSession(tcp::socket socket)
     } catch (const std::exception &e) {
         // Encryption or framing error
     }
+
+    ::asio::error_code ec;
+    socket_.shutdown(tcp::socket::shutdown_both, ec);
+    socket_.close(ec);
 }
 
 } // namespace mithril::network
