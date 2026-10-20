@@ -5,17 +5,24 @@ on:
     branches:
       - main
     paths:
+      - "CMakeLists.txt"
       - "Mithril_API_V2/**"
-      - "examples/**"
+      - "crypto/**"
       - "network/**"
+      - "tests/**"
+      - "examples/**"
       - ".github/workflows/mithril-v2-build-test.yml"
   push:
     branches:
+      - main
       - codex/mithril-v2-sprints
     paths:
+      - "CMakeLists.txt"
       - "Mithril_API_V2/**"
-      - "examples/**"
+      - "crypto/**"
       - "network/**"
+      - "tests/**"
+      - "examples/**"
       - ".github/workflows/mithril-v2-build-test.yml"
   workflow_dispatch:
 
@@ -117,6 +124,50 @@ jobs:
             Mithril_API_V2/build-cmake-flint/ctest.log
           if-no-files-found: warn
 
+  root-build-test:
+    name: root-build-test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+          - os: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config zsh ccache libsodium-dev libflint-dev libgmp-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install cmake pkg-config ccache libsodium flint gmp
+
+      - name: Configure root CMake
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DMITHRIL_ENABLE_TESTS=ON \
+            -DMITHRIL_USE_LIBSODIUM=ON
+
+      - name: Build all targets
+        run: |
+          cmake --build build --parallel
+
+      - name: Run root CTest suite (24 tests)
+        run: |
+          ctest --test-dir build --output-on-failure
+
+      - name: Run full test runner script
+        run: |
+          zsh scripts/testing/run_all_tests.zsh
+
   consumers-smoke:
     name: consumers-smoke (ubuntu-24.04)
     runs-on: ubuntu-24.04
@@ -162,15 +213,20 @@ jobs:
   ci-required-gate:
     name: ci-required-gate
     runs-on: ubuntu-24.04
-    needs: [build-test, consumers-smoke]
+    needs: [build-test, root-build-test, consumers-smoke]
     if: ${{ always() }}
     steps:
       - name: Enforce required job success
         run: |
           echo "build-test result: ${{ needs.build-test.result }}"
+          echo "root-build-test result: ${{ needs.root-build-test.result }}"
           echo "consumers-smoke result: ${{ needs.consumers-smoke.result }}"
           if [[ "${{ needs.build-test.result }}" != "success" ]]; then
             echo "[ERROR] One or more build-test matrix jobs failed."
+            exit 1
+          fi
+          if [[ "${{ needs.root-build-test.result }}" != "success" ]]; then
+            echo "[ERROR] root-build-test failed."
             exit 1
           fi
           if [[ "${{ needs.consumers-smoke.result }}" != "success" ]]; then

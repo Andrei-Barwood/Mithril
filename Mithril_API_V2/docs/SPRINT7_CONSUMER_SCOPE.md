@@ -24,7 +24,7 @@ Los consumidores anteriores deben:
 
 1. `examples/basic/binding_socket_sodium.cpp`
 2. `Mithril_Criptography_API/**` (framework legacy)
-3. `ASIC implementation/**` (legacy/experimental)
+3. `hardware/**` (antes `ASIC implementation/**`, aceleración hardware/experimental)
 4. Tooling y scripts de scaffolding no runtime (ej: `add_component.zsh`)
 
 Razon: no forman parte del flujo de consumidor objetivo definido para la migracion operativa de red/seguridad en Sprint 7.

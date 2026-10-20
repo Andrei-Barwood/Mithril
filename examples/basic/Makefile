@@ -48,6 +48,7 @@ SERVER := accepting_connection_sodium
 CLIENT := secure_client
 ROLLOUT_TEST := test_rollout_toggles
 TELEMETRY_TEST := test_crypto_telemetry
+NETWORK_SRCS := $(wildcard $(ROOT_DIR)/network/src/*.cpp)
 COMPAT_SRC := $(ROOT_DIR)/network/src/boost_asio_compat.cpp
 
 .PHONY: all clean run-server run-client test test-sprint8 help check-deps ensure-asio ensure-v2 clean-third-party
@@ -107,24 +108,24 @@ $(MITHRIL_V2_LIB):
 # Build targets
 # ============================================================================
 
-$(SERVER): accepting_connection_sodium.cpp $(COMPAT_SRC) ensure-asio ensure-v2
+$(SERVER): accepting_connection_sodium.cpp $(NETWORK_SRCS) ensure-asio ensure-v2
 	@echo "[build] compiling $(SERVER)..."
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) $(LIBS) -o $@
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(NETWORK_SRCS) $< $(LDFLAGS) $(LIBS) -o $@
 	@echo "[build] done: ./$(SERVER)"
 
-$(CLIENT): secure_client.cpp $(COMPAT_SRC) ensure-asio ensure-v2
+$(CLIENT): secure_client.cpp $(NETWORK_SRCS) ensure-asio ensure-v2
 	@echo "[build] compiling $(CLIENT)..."
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) $(LIBS) -o $@
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(NETWORK_SRCS) $< $(LDFLAGS) $(LIBS) -o $@
 	@echo "[build] done: ./$(CLIENT)"
 
-$(ROLLOUT_TEST): test_rollout_toggles.cpp $(COMPAT_SRC) ensure-asio
+$(ROLLOUT_TEST): test_rollout_toggles.cpp $(NETWORK_SRCS) ensure-asio ensure-v2
 	@echo "[build] compiling $(ROLLOUT_TEST)..."
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) -o $@
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(NETWORK_SRCS) $< $(LDFLAGS) $(LIBS) -o $@
 	@echo "[build] done: ./$(ROLLOUT_TEST)"
 
-$(TELEMETRY_TEST): test_crypto_telemetry.cpp $(COMPAT_SRC) ensure-asio ensure-v2
+$(TELEMETRY_TEST): test_crypto_telemetry.cpp $(NETWORK_SRCS) ensure-asio ensure-v2
 	@echo "[build] compiling $(TELEMETRY_TEST)..."
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(COMPAT_SRC) $< $(LDFLAGS) $(LIBS) -o $@
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(NETWORK_SRCS) $< $(LDFLAGS) $(LIBS) -o $@
 	@echo "[build] done: ./$(TELEMETRY_TEST)"
 
 # ============================================================================

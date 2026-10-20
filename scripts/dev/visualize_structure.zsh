@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "${REPO_ROOT}"
+
 readonly CYAN='\033[0;36m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'

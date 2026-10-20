@@ -7,7 +7,7 @@
 ## 🧭 Estructura de Directorios
 
 ```text
-ASIC implementation/
+hardware/
 ├── Makefile                     # Driver de compilación y simulación para Icarus Verilog
 ├── run_icarus_sim.zsh           # Script ejecutable de simulación automatizada
 ├── rtl/                         # Módulos Verilog sintetizables (RTL)
@@ -52,7 +52,7 @@ sudo apt-get install -y iverilog gtkwave
 
 ### 1. Ejecutar Todas las Simulaciones con Makefile
 ```zsh
-cd "ASIC implementation"
+cd hardware
 make sim-all
 ```
 
