@@ -122,7 +122,7 @@ SecureSession::SecureSession(tcp::socket socket)
         }
     } catch (const ::asio::system_error &) {
         // Peer disconnected or socket closed cleanly
-    } catch (const std::exception &e) {
+    } catch (const std::exception &) {
         // Encryption or framing error
     }
 
