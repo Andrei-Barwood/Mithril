@@ -458,7 +458,7 @@ flowchart LR
 | **Sesión 6** | [`b1645f5`](https://github.com/Andrei-Barwood/Mithril/commit/b1645f5) | Hardening de CI/CD, normalización de directorios (`hardware/`, `tools/archive/`, `scripts/dev/`) y documentación técnica integral en `docs/`. |
 | **CI Fix 1** | [`2f6aac3`](https://github.com/Andrei-Barwood/Mithril/commit/2f6aac3) | Corrección de CI en macOS (evitar compilación de `z3`/`ccache` desde fuente) y cache de `MITHRIL_ASIO_INCLUDE_DIR` en Ubuntu. |
 | **CI Fix 2** | [`83d436a`](https://github.com/Andrei-Barwood/Mithril/commit/83d436a) | Soporte `reuse_address` en `SecureAcceptor`, shutdown explícito en `SecureSession` y timeout de 30s en CTest. |
-| **CI Fix 3** | [`2277d6e`](https://github.com/Andrei-Barwood/Mithril/commit/2277d6e) | Puerto efímero dinámico (puerto 0), reintentos con backoff en clientes y temporizador watchdog para estabilidad 100% en Linux. |
+| **CI Fix 3** | [`c0f593f`](https://github.com/Andrei-Barwood/Mithril/commit/c0f593f) | Desacoplamiento de hilos servidor/cliente y reemplazo de lambda corrutina por función libre C++20 para garantizar ciclo de vida en coroutine frame. 100% verde en GitHub Actions ([Run #39509129831](https://github.com/Andrei-Barwood/Mithril/actions/runs/39509129831)). |
 
 ### 6.2. Estado Actual del Workspace
 * **Rama:** `main` sincronizada con `origin/main`.
