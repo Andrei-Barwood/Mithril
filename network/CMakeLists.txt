@@ -43,6 +43,12 @@ message(STATUS "Mithril Network: Using Asio headers from: ${MITHRIL_ASIO_INCLUDE
 # ----------------------------------------------------------------------------
 add_library(mithril_network STATIC
     src/boost_asio_compat.cpp
+    src/key_exchange.cpp
+    src/stream_encryption.cpp
+    src/digital_signature.cpp
+    src/crypto_hash.cpp
+    src/secure_session.cpp
+    src/secure_acceptor.cpp
 )
 
 add_library(mithril::network ALIAS mithril_network)

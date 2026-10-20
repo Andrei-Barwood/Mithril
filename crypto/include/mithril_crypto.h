@@ -11,7 +11,7 @@
  * @brief Umbrella header forwarding to Mithril API V2.
  * 
  * Notice: New development should link directly against mithril_v2 and include
- * headers from <mithril/*.h>.
+ * headers from <mithril/mithril_api.h>.
  */
 
 #include <mithril/mithril_api.h>
@@ -23,5 +23,7 @@
 #include <mithril/mithril_bigint.h>
 #include <mithril/mithril_modarith.h>
 #include <mithril/mithril_version.h>
+
+const char *mithril_crypto_layer_info(void);
 
 #endif /* MITHRIL_CRYPTO_H */

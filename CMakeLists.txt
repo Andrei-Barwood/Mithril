@@ -79,6 +79,11 @@ if(MITHRIL_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+if(MITHRIL_BUILD_TESTS)
+    message(STATUS "Configuring Mithril Test Suite (tests)...")
+    add_subdirectory(tests)
+endif()
+
 # Apply compiler warnings to targets if enabled
 if(MITHRIL_ENABLE_WARNINGS)
     if(TARGET mithril_v2)

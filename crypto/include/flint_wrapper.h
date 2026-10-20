@@ -16,4 +16,6 @@
 #include <mithril/mithril_bigint.h>
 #include <mithril/mithril_modarith.h>
 
+const char *mithril_flint_wrapper_info(void);
+
 #endif /* MITHRIL_FLINT_WRAPPER_H */

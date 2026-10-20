@@ -377,10 +377,24 @@ flowchart LR
 - [x] Definir el destino del directorio [`crypto/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/crypto) (resuelto como capa paraguas y alias que redirige a `Mithril_API_V2` sin archivos de 0 bytes).
 
 ### 📍 Sesión 3: Refactorización y Modularización de la Capa Network
-- [ ] Trasladar [`network/include/mithril/test_mithril_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/test_mithril_sodium.cpp) fuera del directorio `include/` y ubicarlo en `tests/unit/`.
-- [ ] Desglosar el mega-header [`mithril_sodium.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/mithril_sodium.hpp) en sus cabeceras individuales ya creadas (`crypto_hash.hpp`, `digital_signature.hpp`, `key_exchange.hpp`, `stream_encryption.hpp`, `secure_session.hpp`, `secure_acceptor.hpp`).
-- [ ] Escribir o enlazar las implementaciones correspondientes en `network/src/`.
-- [ ] Verificar compatibilidad completa de compilación con Asio standalone y C++20.
+- [x] Trasladar [`network/include/mithril/test_mithril_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/unit/test_mithril_sodium.cpp) fuera del directorio `include/` y ubicarlo en `tests/unit/` (ahora integrado en CTest como prueba #11).
+- [x] Desglosar el mega-header [`mithril_sodium.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/mithril_sodium.hpp) en cabeceras individuales modulares:
+  - [`common.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/common.hpp): Tipos base, claves seguras RAII (`SecureKey`), conceptos C++20, telemetría y utilidades.
+  - [`crypto_hash.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/crypto_hash.hpp): Primitivas de hashing BLAKE2b y hash multipart.
+  - [`digital_signature.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/digital_signature.hpp): Firmas digitales Ed25519 y firmado autenticado.
+  - [`key_exchange.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/key_exchange.hpp): Intercambio de claves ECDH X25519.
+  - [`stream_encryption.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/stream_encryption.hpp): Cifrado autenticado AEAD XChaCha20-Poly1305 y cifrado por secuencias.
+  - [`secure_session.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/secure_session.hpp): Sesión TCP segura y corrutinas Asio.
+  - [`secure_acceptor.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/secure_acceptor.hpp): Aceptador asíncrono para servidores seguros.
+  - [`mithril_sodium.hpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/mithril_sodium.hpp): Cabecera paraguas para 100% retrocompatibilidad.
+- [x] Escribir las implementaciones correspondientes en `network/src/` eliminando todos los archivos de 0 bytes:
+  - [`key_exchange.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/key_exchange.cpp)
+  - [`stream_encryption.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/stream_encryption.cpp)
+  - [`digital_signature.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/digital_signature.cpp)
+  - [`crypto_hash.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/crypto_hash.cpp)
+  - [`secure_session.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/secure_session.cpp)
+  - [`secure_acceptor.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/src/secure_acceptor.cpp)
+- [x] Verificar compatibilidad completa de compilación con Asio standalone y C++20 (11/11 pruebas en verde, cero warnings).
 
 ### 📍 Sesión 4: Implementación de la Suite de Pruebas en [`tests/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests)
 - [ ] Escribir el [`tests/CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/tests/CMakeLists.txt) integrando Catch2 o el framework de pruebas preferido.
