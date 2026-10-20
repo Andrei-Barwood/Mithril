@@ -107,8 +107,8 @@ std::string resolve_canary_key() {
 
 uint32_t fnv1a_bucket_0_to_99(std::string_view key) noexcept {
     uint32_t hash = 2166136261u;
-    for (const unsigned char c : key) {
-        hash ^= static_cast<uint32_t>(c);
+    for (const char c : key) {
+        hash ^= static_cast<uint32_t>(static_cast<unsigned char>(c));
         hash *= 16777619u;
     }
     return hash % 100u;

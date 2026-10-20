@@ -19,8 +19,7 @@
 #include <string>
 #include <format>
 
-namespace asio = boost::asio;
-using tcp = asio::ip::tcp;
+using tcp = boost::asio::ip::tcp;
 
 // ============================================================================
 // Secure Socket Binder (Modernized Version)
@@ -167,7 +166,7 @@ public:
                 std::cout << "✓ Successfully bound to port " << port << "\n";
                 
                 // Transfer ownership to member variable
-                acceptor_ = std::move(acceptor);
+                acceptor_ = std::make_unique<tcp::acceptor>(std::move(acceptor));
                 bound_port_ = port;
                 
                 co_return port;
@@ -195,7 +194,7 @@ private:
     uint16_t start_port_;
     uint16_t end_port_;
     uint16_t bound_port_ = 0;
-    tcp::acceptor acceptor_;
+    std::unique_ptr<tcp::acceptor> acceptor_;
 };
 
 // ============================================================================

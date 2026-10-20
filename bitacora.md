@@ -371,10 +371,10 @@ flowchart LR
 - [x] Llenar el archivo [`LICENSE`](file:///Users/andreibarwood/Documents/snocomm/Mithril/LICENSE) con la licencia MIT oficial.
 
 ### 📍 Sesión 2: Unificación del Sistema de Compilación (CMake Raíz)
-- [ ] Implementar el [`CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/CMakeLists.txt) raíz para gobernar todo el proyecto con un único `cmake -B build`.
-- [ ] Rellenar [`cmake/CompilerWarnings.cmake`](file:///Users/andreibarwood/Documents/snocomm/Mithril/cmake/CompilerWarnings.cmake) y [`cmake/Sanitizers.cmake`](file:///Users/andreibarwood/Documents/snocomm/Mithril/cmake/Sanitizers.cmake).
-- [ ] Eliminar el acoplamiento frágil en [`examples/basic/CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/CMakeLists.txt) hacia el archivo `.a` precompilado, reemplazándolo por el target de CMake `mithril_v2`.
-- [ ] Definir el destino del directorio [`crypto/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/crypto) (deprecarlo y unificarlo en V2, o escribir sus wrappers correspondientes).
+- [x] Implementar el [`CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/CMakeLists.txt) raíz para gobernar todo el proyecto con un único `cmake -B build`.
+- [x] Rellenar [`cmake/CompilerWarnings.cmake`](file:///Users/andreibarwood/Documents/snocomm/Mithril/cmake/CompilerWarnings.cmake) y [`cmake/Sanitizers.cmake`](file:///Users/andreibarwood/Documents/snocomm/Mithril/cmake/Sanitizers.cmake) (además de los módulos de detección `Findsodium.cmake` y `FindFLINT.cmake`).
+- [x] Eliminar el acoplamiento frágil en [`examples/basic/CMakeLists.txt`](file:///Users/andreibarwood/Documents/snocomm/Mithril/examples/basic/CMakeLists.txt) hacia el archivo `.a` precompilado, reemplazándolo por el target de CMake `mithril_v2` e integrando la compilación de `network/`.
+- [x] Definir el destino del directorio [`crypto/`](file:///Users/andreibarwood/Documents/snocomm/Mithril/crypto) (resuelto como capa paraguas y alias que redirige a `Mithril_API_V2` sin archivos de 0 bytes).
 
 ### 📍 Sesión 3: Refactorización y Modularización de la Capa Network
 - [ ] Trasladar [`network/include/mithril/test_mithril_sodium.cpp`](file:///Users/andreibarwood/Documents/snocomm/Mithril/network/include/mithril/test_mithril_sodium.cpp) fuera del directorio `include/` y ubicarlo en `tests/unit/`.
