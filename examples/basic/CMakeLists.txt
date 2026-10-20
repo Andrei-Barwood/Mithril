@@ -71,7 +71,6 @@ function(mithril_configure_example target_name source_file)
         PRIVATE
             "${MITHRIL_REPO_ROOT}/network/include"
             "${MITHRIL_REPO_ROOT}/Mithril_API_V2/include"
-            ${MITHRIL_ASIO_INCLUDE_DIR}
             ${SODIUM_INCLUDE_DIRS}
     )
 

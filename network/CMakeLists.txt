@@ -33,7 +33,8 @@ if(NOT MITHRIL_ASIO_INCLUDE_DIR)
         DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     )
     FetchContent_MakeAvailable(asio)
-    set(MITHRIL_ASIO_INCLUDE_DIR "${asio_SOURCE_DIR}/asio/include")
+    set(MITHRIL_ASIO_INCLUDE_DIR "${asio_SOURCE_DIR}/asio/include" CACHE PATH "Path to Asio headers" FORCE)
+    set(MITHRIL_ASIO_INCLUDE_DIR "${asio_SOURCE_DIR}/asio/include" PARENT_SCOPE)
 endif()
 
 message(STATUS "Mithril Network: Using Asio headers from: ${MITHRIL_ASIO_INCLUDE_DIR}")
